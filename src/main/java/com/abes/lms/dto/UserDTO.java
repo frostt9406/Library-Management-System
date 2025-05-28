@@ -6,7 +6,7 @@ public class UserDTO {
     private String id;
 
     public UserDTO(String name, String password, String id) {
-      //  setName(name);
+        setName(name);
         setPassword(password);
         setId(id);
     }
