@@ -1,0 +1,4 @@
+package com.abes.lms.dao;
+
+public class UserDAO {
+}
