@@ -1,10 +1,10 @@
-package com.abes.LibraryManagementSystem;
+package com.abes.lms;
 
 /**
  * Hello world!
  *
  */
-public class App 
+public class Main
 {
     public static void main( String[] args )
     {
