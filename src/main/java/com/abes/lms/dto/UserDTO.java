@@ -1,35 +1,22 @@
 package com.abes.lms.dto;
+import java.util.HashSet;
+import java.util.Set;
 
-public class UserDTO {
-    private String name;
-    private String password;
-    private String id;
 
-    public UserDTO(String name, String password, String id) {
-        setName(name);
-        setPassword(password);
-        setId(id);
+public class UserDTO extends UserBase {
+    private Set<Integer> borrowedBookIds = new HashSet<>();
+
+    public UserDTO(String username, String password, String email) {
+        super(username, password, email);
     }
 
-    public String getName() {
-        return name;
-    }
+    public Set<Integer> getBorrowedBookIds() { return borrowedBookIds; }
 
+    public void borrowBook(int bookId) { borrowedBookIds.add(bookId); }
+    public void returnBook(int bookId) { borrowedBookIds.remove(bookId); }
 
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "User[" + username + ", Email=" + email + ", BorrowedBookIds=" + borrowedBookIds + "]";
     }
 }
