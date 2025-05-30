@@ -1,4 +1,6 @@
 package com.abes.lms.dao;
 
-public class LibrarianDAO {
+import com.abes.lms.dto.LibrarianDTO;
+public interface LibrarianDAO {
+    LibrarianDTO librarianLogin(String username, String password);
 }
