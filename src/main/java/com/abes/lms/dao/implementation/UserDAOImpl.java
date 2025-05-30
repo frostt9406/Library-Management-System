@@ -33,4 +33,9 @@ public class UserDAOImpl implements UserDAO {
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        return users;
+    }
 }

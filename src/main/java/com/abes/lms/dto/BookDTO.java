@@ -21,6 +21,8 @@ public class BookDTO {
     public double getRating() { return rating; }
     public int getQuantity() { return quantity; }
 
+    public void setId(int id) { this.id = id; }
+
     public void increaseQuantity() { quantity++; }
     public void decreaseQuantity() { if (quantity > 0) quantity--; }
 
