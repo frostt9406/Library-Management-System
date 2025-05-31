@@ -1,10 +1,8 @@
-package com.abes.lms.service.implementation;
+package com.abes.lms.service;
 
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.dto.LibrarianDTO;
 import com.abes.lms.dao.LibrarianDAO;
-import com.abes.lms.service.BookServices;
-import com.abes.lms.service.LibrarianServices;
 
 public class LibrarianServiceImpl implements LibrarianServices {
     private final BookServices bookService;

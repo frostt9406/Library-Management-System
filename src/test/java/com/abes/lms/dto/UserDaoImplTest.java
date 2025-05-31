@@ -2,8 +2,7 @@ package com.abes.lms.dto;
 
 package com.abes.lms.dao;
 
-import com.abes.lms.dao.implementation.UserDAOImpl;
-import com.abes.lms.dto.UserDTO;
+import com.abes.lms.dao.UserDAOImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
