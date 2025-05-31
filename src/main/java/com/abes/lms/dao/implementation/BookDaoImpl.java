@@ -50,4 +50,13 @@ public class BookDaoImpl implements BookDAO{
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public boolean addQuantity(BookDTO book, int quantity) {
+        if(book==null) {
+            return false;
+        }
+        book.setQuantity(book.getQuantity() + quantity);
+        return true;
+    }
 }

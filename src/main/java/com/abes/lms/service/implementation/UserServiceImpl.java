@@ -1,20 +1,46 @@
 package com.abes.lms.service.implementation;
 
+import com.abes.lms.dao.UserDAO;
 import com.abes.lms.dto.BookDTO;
+import com.abes.lms.dto.UserDTO;
 import com.abes.lms.service.BookServices;
 import com.abes.lms.service.UserServices;
 
 import java.util.*;
 
 public class UserServiceImpl implements UserServices {
-    private final BookServices bookService;
+    private BookServices bookService;
+    private  UserDAO userDAO;
     private final Map<String, List<String>> userBorrowedBooks = new HashMap<>();
 
-    public UserServiceImpl(BookServices bookService) {
-        this.bookService = bookService;
+    public UserServiceImpl(BookServices bookService, UserDAO userDAO) {
+        setBookService(bookService);
+        setUserDAO(userDAO);
+    }
+    public void setBookService(BookServices bookService){
+        this.bookService=bookService;
+    }
+    public void setUserDAO(UserDAO userDAO){
+        this.userDAO=userDAO;
     }
 
-
+@Override
+public boolean userRegister(String username,String password,String email) {
+    UserDTO user = new UserDTO(username, password, email);
+    userDAO.userRegister(user);
+    return true;
+}
+@Override
+public void userLogin(String username,String password) {
+        UserDTO user = userDAO.getUser(username);
+    if (user == null) {
+        System.out.println("Invalid username or password.");
+        return;
+    }
+     else {
+        System.out.println("Login successful.");
+    }
+}
 @Override
 public void borrowBook(String username, String title) {
     BookDTO book = bookService.getBookByTitle(title);
@@ -43,6 +69,11 @@ public void returnBook(String username, String title) {
     }
 }
 
+    @Override
+    public UserDTO getUser(String username) {
+        return userDAO.getUser(username);
+    }
+
 
     @Override
     public List<BookDTO> viewBooks() {
@@ -63,4 +94,5 @@ public void returnBook(String username, String title) {
     public List<BookDTO> sortBooksByTitle() {
         return bookService.sortBooksByTitle();
     }
+
 }
