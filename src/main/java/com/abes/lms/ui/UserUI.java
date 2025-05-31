@@ -1,11 +1,10 @@
 package com.abes.lms.ui;
 
-import com.abes.lms.dto.BookDTO;
 import com.abes.lms.exception.InvalidInputException;
+import com.abes.lms.service.BookServices;
 import com.abes.lms.service.UserServices;
 import com.abes.lms.util.InputValidatorUtil;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class UserUI {
@@ -38,7 +37,7 @@ public class UserUI {
         }
     }
 
-    public static void handleUserLogin(UserServices userService, Scanner sc) {
+    public static void handleUserLogin(UserServices userService,BookServices bookServices,Scanner sc) {
         try {
             System.out.print("Enter username: ");
             String username = sc.nextLine();
@@ -48,9 +47,13 @@ public class UserUI {
             String password = sc.nextLine();
             InputValidatorUtil.validate(password);
 
-            userService.userLogin(username, password);
+            boolean isUserValid = userService.userLogin(username, password);
+            if(!isUserValid){
+                System.out.println("Invalid Credentials");
+                return;
+            }
 
-            int choice;
+            String choice;
             do {
                 System.out.println("\n=== User Menu ===");
                 System.out.println("1. View All Books");
@@ -61,51 +64,43 @@ public class UserUI {
                 System.out.println("6. Sort Books by Title");
                 System.out.println("0. Logout");
                 System.out.print("Enter your choice: ");
-                choice = Integer.parseInt(sc.nextLine());
+                choice = sc.nextLine();
 
                 switch (choice) {
-                    case 1:
-                        displayBooks(userService.viewBooks());
+                    case "1":
+                        bookServices.getAllBooks().forEach(System.out::println);
                         break;
-                    case 2:
+                    case "2":
                         System.out.print("Enter book title to borrow: ");
                         String borrowTitle = sc.nextLine();
                         userService.borrowBook(username, borrowTitle);
                         break;
-                    case 3:
+                    case "3":
                         System.out.print("Enter book title to return: ");
                         String returnTitle = sc.nextLine();
                         userService.returnBook(username, returnTitle);
                         break;
-                    case 4:
-                        displayBooks(userService.sortBooksById());
+                    case "4":
+                        userService.sortBooksById().forEach(System.out::println);
                         break;
-                    case 5:
-                        displayBooks(userService.sortBooksByRating());
+                    case "5":
+                        userService.sortBooksByRating().forEach(System.out::println);;
                         break;
-                    case 6:
-                        displayBooks(userService.sortBooksByTitle());
+                    case "6":
+                        userService.sortBooksByTitle().forEach(System.out::println);;
                         break;
-                    case 0:
+                    case "0":
                         System.out.println("Logged out.");
                         break;
                     default:
                         System.out.println("Invalid choice.");
                 }
-            } while (choice != 0);
+            } while (!choice.equals("0"));
 
         } catch (InvalidInputException | NumberFormatException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private static void displayBooks(List<BookDTO> books) {
-        if (books.isEmpty()) {
-            System.out.println("No books available.");
-        } else {
-            for (BookDTO b : books) {
-                System.out.println(b);
-            }
-        }
-    }
+
 }

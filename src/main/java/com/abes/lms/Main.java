@@ -19,7 +19,7 @@ public class Main {
         BookDaoImpl bookDAO = new BookDaoImpl();
         UserDAOImpl userDAO = new UserDAOImpl();
         LibrarianDAOImpl librarianDAO = new LibrarianDAOImpl();
-        BookServices bookServices = new BookServiceImpl();
+        BookServices bookServices = new BookServiceImpl(bookDAO);
         UserServices userService = new UserServiceImpl(bookServices, userDAO);
         LibrarianServices librarianServices = new LibrarianServiceImpl(bookServices, librarianDAO);
 
@@ -47,10 +47,10 @@ public class Main {
                     UserUI.registerUser(userService, sc);
                     break;
                 case 2:
-                    UserUI.handleUserLogin(userService, sc);
+                    UserUI.handleUserLogin(userService,bookServices, sc);
                     break;
                 case 3:
-                    LibrarianUI.handleLibrarianLogin(librarianServices, bookServices,bookDAO, userDAO, sc);
+                    LibrarianUI.handleLibrarianLogin(librarianServices, bookServices,userService,bookDAO, userDAO, sc);
                     break;
                 case 0:
                     running = false;

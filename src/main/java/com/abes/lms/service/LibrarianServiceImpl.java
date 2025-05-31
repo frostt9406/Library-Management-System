@@ -1,8 +1,7 @@
 package com.abes.lms.service;
 
-import com.abes.lms.dto.BookDTO;
-import com.abes.lms.dto.LibrarianDTO;
 import com.abes.lms.dao.LibrarianDAO;
+import com.abes.lms.dto.LibrarianDTO;
 
 public class LibrarianServiceImpl implements LibrarianServices {
     private final BookServices bookService;
@@ -13,18 +12,11 @@ public class LibrarianServiceImpl implements LibrarianServices {
     }
 
     @Override
-    public void LibrarianLogin(String username, String password) {
+    public boolean LibrarianLogin(String username, String password) {
         LibrarianDTO librarian = librarianDAO.librarianLogin(username, password);
-        if (librarian == null) {
-            System.out.println("Invalid credentials.");
-            return;
-        }
+        return librarian != null;
     }
 
-    @Override
-    public boolean addBook(BookDTO book) {
-        return bookService.addBook(book);
-    }
 
     @Override
     public boolean removeBook(String title) {

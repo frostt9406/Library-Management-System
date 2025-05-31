@@ -1,9 +1,9 @@
 package com.abes.lms.dao;
+
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.util.CollectionUtil;
 
 import java.util.List;
-import java.util.Optional;
 public class BookDaoImpl implements BookDAO{
     private final List<BookDTO> books = CollectionUtil.getBookList();
 
@@ -17,10 +17,7 @@ public class BookDaoImpl implements BookDAO{
 
     @Override
     public boolean removeBook(String title) {
-        Optional<BookDTO> bookToRemove = books.stream()
-                .filter(book -> book.getTitle().equalsIgnoreCase(title))
-                .findFirst();
-        return bookToRemove.map(books::remove).orElse(false);
+        return CollectionUtil.getBookList().removeIf(book -> book.getTitle().equalsIgnoreCase(title));
     }
 
     @Override

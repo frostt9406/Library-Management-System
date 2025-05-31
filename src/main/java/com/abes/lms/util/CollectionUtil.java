@@ -8,18 +8,7 @@ public class CollectionUtil {
     private static List<BookDTO> books = new ArrayList<>();
     private static List<UserDTO> users = new ArrayList<>();
     private static List<LibrarianDTO> libarian = new ArrayList<>();
-
-    public static List<BookDTO> getBooks() {
-        return books;
-    }
-
-    public static List<UserDTO> getUsers() {
-        return users;
-    }
-
-    public static List<LibrarianDTO> getLibarian() {
-        return libarian;
-    }
+    private static Map<String, List<BookDTO>> usersBorrowedBooks = new HashMap<>();
 
     static {
         users.add(new UserDTO("ayush","ayush","ayush@gmail.com"));
@@ -38,10 +27,13 @@ public class CollectionUtil {
         books.add(new BookDTO("Java Performance", "Charlie Hunt", 110, 4.2, 2));
 
     }
-
+    public static Map<String, List<BookDTO>> getUserBorrowedBooks(){
+        return usersBorrowedBooks;
+    }
     public static List<BookDTO> getBookList() { return books; }
     public static List<UserDTO> getUserList() { return users; }
     public static List<LibrarianDTO> getLibarianList() { return libarian; }
+
 }
 
 
