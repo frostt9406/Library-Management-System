@@ -7,6 +7,8 @@ public interface BookServices {
     boolean addBook(BookDTO book);
     boolean removeBook(String title);
     boolean isBookPresent(String title);
+    boolean isBookPresentById(int id);
+    boolean addQuantity(BookDTO book,int quantity);
     List<BookDTO> getAllBooks();
     BookDTO getBookByTitle(String title);
     BookDTO getBookById(int id);

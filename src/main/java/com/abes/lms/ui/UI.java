@@ -4,12 +4,13 @@ import com.abes.lms.dao.implementation.BookDaoImpl;
 import com.abes.lms.dao.implementation.LibrarianDAOImpl;
 import com.abes.lms.dao.implementation.UserDAOImpl;
 import com.abes.lms.dto.BookDTO;
-import com.abes.lms.dto.LibrarianDTO;
 import com.abes.lms.dto.UserDTO;
 import com.abes.lms.exception.InvalidInputException;
 import com.abes.lms.service.BookServices;
+import com.abes.lms.service.LibrarianServices;
 import com.abes.lms.service.UserServices;
 import com.abes.lms.service.implementation.BookServiceImpl;
+import com.abes.lms.service.implementation.LibrarianServiceImpl;
 import com.abes.lms.service.implementation.UserServiceImpl;
 import com.abes.lms.util.InputValidatorUtil;
 
@@ -17,12 +18,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class UI {
-    public static void main(String[] args) {
-        BookDaoImpl bookDAO = new BookDaoImpl();
-        UserDAOImpl userDAO = new UserDAOImpl();
-        LibrarianDAOImpl librarianDAO = new LibrarianDAOImpl();
-        BookServices bookServices = new BookServiceImpl();
-        UserServices userService = new UserServiceImpl(bookServices);
+    BookDaoImpl bookDAO = new BookDaoImpl();
+    UserDAOImpl userDAO = new UserDAOImpl();
+    LibrarianDAOImpl librarianDAO = new LibrarianDAOImpl();
+    BookServices bookServices = new BookServiceImpl();
+    UserServices userService = new UserServiceImpl(bookServices,userDAO);
+    LibrarianServices librarianServices = new LibrarianServiceImpl(bookServices,librarianDAO);
+    public  void runner() {
 
         Scanner sc = new Scanner(System.in);
         boolean running = true;
@@ -65,7 +67,7 @@ public class UI {
         sc.close();
     }
 
-    private static void registerUser(UserDAOImpl userDAO, Scanner sc) {
+    private  void registerUser(UserDAOImpl userDAO, Scanner sc) {
         try {
             System.out.print("Enter username: ");
             String username = sc.nextLine();
@@ -79,20 +81,20 @@ public class UI {
             String email = sc.nextLine();
             InputValidatorUtil.validateEmail(email);
 
-            if (userDAO.getUser(username) != null) {
+            if (userService.getUser(username) != null) {
                 System.out.println("Username already exists. Please login instead.");
                 return;
             }
+            if(userService.userRegister(username, password, email)) {
+                System.out.println("User registered successfully!");
+            }
 
-            UserDTO user = new UserDTO(username, password, email);
-            userDAO.userRegister(user);
-            System.out.println("User registered successfully!");
         } catch (InvalidInputException e) {
             System.out.println("Registration failed: " + e.getMessage());
         }
     }
 
-    private static void handleUserLogin(UserDAOImpl userDAO, UserServices userService, Scanner sc) {
+    private  void handleUserLogin(UserDAOImpl userDAO, UserServices userService, Scanner sc) {
         try {
             System.out.print("Enter username: ");
             String username = sc.nextLine();
@@ -101,15 +103,7 @@ public class UI {
             System.out.print("Enter password: ");
             String password = sc.nextLine();
             InputValidatorUtil.validate(password);
-
-            UserDTO user = userDAO.userLogin(username, password);
-            if (user == null) {
-                System.out.println("Invalid username or password.");
-                return;
-            } else {
-                System.out.println("Login successful.");
-            }
-
+            userService.userLogin(username, password);
             int choice;
             do {
                 System.out.println("\n=== User Menu ===");
@@ -159,7 +153,7 @@ public class UI {
         }
     }
 
-    private static void handleLibrarianLogin(LibrarianDAOImpl librarianDAO, BookDaoImpl bookDAO, UserDAOImpl userDAO, Scanner sc) {
+    private  void handleLibrarianLogin(LibrarianDAOImpl librarianDAO, BookDaoImpl bookDAO, UserDAOImpl userDAO, Scanner sc) {
         try {
             System.out.print("Enter librarian username: ");
             String username = sc.nextLine();
@@ -169,11 +163,8 @@ public class UI {
             String password = sc.nextLine();
             InputValidatorUtil.validate(password);
 
-            LibrarianDTO librarian = librarianDAO.librarianLogin(username, password);
-            if (librarian == null) {
-                System.out.println("Invalid credentials.");
-                return;
-            }
+            librarianServices.LibrarianLogin(username, password);
+
 
             int choice;
             do {
@@ -188,12 +179,23 @@ public class UI {
 
                 switch (choice) {
                     case 1:
+                        System.out.print("Enter book ID: ");
+                        int id = Integer.parseInt(sc.nextLine());
+                        boolean isBookPresent= bookServices.isBookPresentById(id);
+                        if(isBookPresent){
+                            System.out.println("Book already exists with "+ id+  " Please Update The  instead.");
+                            System.out.println("Enter Quantity to Update");
+                            int quantity = Integer.parseInt(sc.nextLine());
+
+                            return;
+
+                        }
+
                         System.out.print("Enter book title: ");
                         String title = sc.nextLine();
                         System.out.print("Enter author: ");
                         String author = sc.nextLine();
-                        System.out.print("Enter book ID: ");
-                        int id = Integer.parseInt(sc.nextLine());
+
                         System.out.print("Enter rating: ");
                         double rating = Double.parseDouble(sc.nextLine());
                         System.out.print("Enter quantity: ");
@@ -230,7 +232,7 @@ public class UI {
         }
     }
 
-    private static void displayBooks(List<BookDTO> books) {
+    private  void displayBooks(List<BookDTO> books) {
         if (books.isEmpty()) {
             System.out.println("No books available.");
         } else {

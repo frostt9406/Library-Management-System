@@ -28,6 +28,16 @@ public class BookServiceImpl implements BookServices {
     }
 
     @Override
+    public boolean isBookPresentById(int id) {
+        return CollectionUtil.getBooks().stream().anyMatch(book-> book.getId() == id );
+    }
+
+    @Override
+    public boolean addQuantity(BookDTO book, int quantity) {
+        return false;
+    }
+
+    @Override
     public List<BookDTO> getAllBooks() {
         return new ArrayList<>(CollectionUtil.getBooks());
     }

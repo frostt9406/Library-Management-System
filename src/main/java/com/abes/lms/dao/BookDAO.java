@@ -9,4 +9,5 @@ public interface BookDAO {
     List<BookDTO> getAllBooks();
     BookDTO getBookByTitle(String title);
     BookDTO getBookById(int id);
+    boolean addQuantity(BookDTO book,int quantity);
 }

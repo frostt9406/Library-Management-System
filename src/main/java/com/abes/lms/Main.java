@@ -1,13 +1,13 @@
 package com.abes.lms;
 
-/**
- * Hello world!
- *
- */
+import com.abes.lms.ui.UI;
+
+
 public class Main
 {
     public static void main( String[] args )
     {
-        System.out.println();
+        UI ui = new UI();
+        ui.runner();
     }
 }
