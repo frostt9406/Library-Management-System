@@ -50,7 +50,7 @@ public class UserUI {
 
             userService.userLogin(username, password);
 
-            int choice;
+            String choice;
             do {
                 System.out.println("\n=== User Menu ===");
                 System.out.println("1. View All Books");
@@ -61,38 +61,38 @@ public class UserUI {
                 System.out.println("6. Sort Books by Title");
                 System.out.println("0. Logout");
                 System.out.print("Enter your choice: ");
-                choice = Integer.parseInt(sc.nextLine());
+                choice = sc.nextLine();
 
                 switch (choice) {
-                    case 1:
+                    case "1":
                         displayBooks(userService.viewBooks());
                         break;
-                    case 2:
+                    case "2":
                         System.out.print("Enter book title to borrow: ");
                         String borrowTitle = sc.nextLine();
                         userService.borrowBook(username, borrowTitle);
                         break;
-                    case 3:
+                    case "3":
                         System.out.print("Enter book title to return: ");
                         String returnTitle = sc.nextLine();
                         userService.returnBook(username, returnTitle);
                         break;
-                    case 4:
+                    case "4":
                         displayBooks(userService.sortBooksById());
                         break;
-                    case 5:
+                    case "5":
                         displayBooks(userService.sortBooksByRating());
                         break;
-                    case 6:
+                    case "6":
                         displayBooks(userService.sortBooksByTitle());
                         break;
-                    case 0:
+                    case "0":
                         System.out.println("Logged out.");
                         break;
                     default:
                         System.out.println("Invalid choice.");
                 }
-            } while (choice != 0);
+            } while (!choice.equals("0"));
 
         } catch (InvalidInputException | NumberFormatException e) {
             System.out.println("Error: " + e.getMessage());

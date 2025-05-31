@@ -1,5 +1,6 @@
 package com.abes.lms.service;
 
+import com.abes.lms.dao.BookDAO;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.util.CollectionUtil;
 
@@ -8,12 +9,18 @@ import java.util.Comparator;
 import java.util.List;
 
 public class BookServiceImpl implements BookServices {
-    private int nextId = 1;
+    public BookDAO bookDAO;
+    public BookServiceImpl(BookDAO bookDAO) {
+        setBookDAO(bookDAO);
+    }
+    public void setBookDAO(BookDAO bookDAO) {
+        this.bookDAO = bookDAO;
+    }
 
-    @Override
-    public boolean addBook(BookDTO book) {
-        book.setId(nextId++);
-        return CollectionUtil.getBooks().add(book);
+        @Override
+    public boolean addBook(String title,String author,int id,double rating,int quantity) {
+        BookDTO book = new BookDTO(title, author, id, rating, quantity);
+        return bookDAO.addBook(book);
     }
 
     @Override
@@ -33,7 +40,7 @@ public class BookServiceImpl implements BookServices {
 
     @Override
     public boolean addQuantity(BookDTO book, int quantity) {
-        return false;
+        return bookDAO.addQuantity(book, quantity);
     }
 
     @Override

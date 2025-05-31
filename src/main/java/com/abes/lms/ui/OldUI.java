@@ -21,7 +21,7 @@ public class OldUI {
     BookDaoImpl bookDAO = new BookDaoImpl();
     UserDAOImpl userDAO = new UserDAOImpl();
     LibrarianDAOImpl librarianDAO = new LibrarianDAOImpl();
-    BookServices bookServices = new BookServiceImpl();
+    BookServices bookServices = new BookServiceImpl(bookDAO);
     UserServices userService = new UserServiceImpl(bookServices,userDAO);
     LibrarianServices librarianServices = new LibrarianServiceImpl(bookServices,librarianDAO);
     public  void runner() {
