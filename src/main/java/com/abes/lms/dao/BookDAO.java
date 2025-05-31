@@ -3,6 +3,7 @@ package com.abes.lms.dao;
 import com.abes.lms.dto.BookDTO;
 import java.util.List;
 public interface BookDAO {
+//    abstract methods of BookDAO
     boolean addBook(BookDTO book);
     boolean removeBook(String title);
     boolean isBookPresent(String title);

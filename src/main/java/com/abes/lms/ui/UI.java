@@ -62,7 +62,7 @@ public class UI {
             }
         }
 
-        sc.close();
+
     }
 
     private static void registerUser(UserDAOImpl userDAO, Scanner sc) {

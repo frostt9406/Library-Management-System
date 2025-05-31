@@ -5,22 +5,18 @@ import com.abes.lms.dto.UserDTO;
 import java.util.*;
 
 public class CollectionUtil {
+//    stores all the books
     private static List<BookDTO> books = new ArrayList<>();
+//    stores all the users
     private static List<UserDTO> users = new ArrayList<>();
+//    stores all the librarian
     private static List<LibrarianDTO> libarian = new ArrayList<>();
 
+//    return the list of books
     public static List<BookDTO> getBooks() {
         return books;
     }
-
-    public static List<UserDTO> getUsers() {
-        return users;
-    }
-
-    public static List<LibrarianDTO> getLibarian() {
-        return libarian;
-    }
-
+// static data
     static {
         users.add(new UserDTO("ayush","ayush","ayush@gmail.com"));
         users.add(new UserDTO("nayab","nayab","nayab@gmail.com"));
@@ -39,6 +35,7 @@ public class CollectionUtil {
 
     }
 
+//    getter methods for book, user, librarian
     public static List<BookDTO> getBookList() { return books; }
     public static List<UserDTO> getUserList() { return users; }
     public static List<LibrarianDTO> getLibarianList() { return libarian; }
