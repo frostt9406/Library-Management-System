@@ -1,7 +1,6 @@
-package com.abes.lms.service.implementation;
+package com.abes.lms.service;
 
 import com.abes.lms.dto.BookDTO;
-import com.abes.lms.service.BookServices;
 import com.abes.lms.util.CollectionUtil;
 
 import java.util.ArrayList;

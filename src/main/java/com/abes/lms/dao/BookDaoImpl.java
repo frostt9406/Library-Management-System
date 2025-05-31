@@ -1,5 +1,4 @@
-package com.abes.lms.dao.implementation;
-import com.abes.lms.dao.BookDAO;
+package com.abes.lms.dao;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.util.CollectionUtil;
 

@@ -2,8 +2,7 @@ package com.abes.lms.dto;
 
 package com.abes.lms.dao;
 
-import com.abes.lms.dao.implementation.LibrarianDAOImpl;
-import com.abes.lms.dto.LibrarianDTO;
+import com.abes.lms.dao.LibrarianDAOImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

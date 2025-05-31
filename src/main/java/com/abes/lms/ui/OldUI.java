@@ -1,23 +1,23 @@
 package com.abes.lms.ui;
 
-import com.abes.lms.dao.implementation.BookDaoImpl;
-import com.abes.lms.dao.implementation.LibrarianDAOImpl;
-import com.abes.lms.dao.implementation.UserDAOImpl;
+import com.abes.lms.dao.BookDaoImpl;
+import com.abes.lms.dao.LibrarianDAOImpl;
+import com.abes.lms.dao.UserDAOImpl;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.dto.UserDTO;
 import com.abes.lms.exception.InvalidInputException;
 import com.abes.lms.service.BookServices;
 import com.abes.lms.service.LibrarianServices;
 import com.abes.lms.service.UserServices;
-import com.abes.lms.service.implementation.BookServiceImpl;
-import com.abes.lms.service.implementation.LibrarianServiceImpl;
-import com.abes.lms.service.implementation.UserServiceImpl;
+import com.abes.lms.service.BookServiceImpl;
+import com.abes.lms.service.LibrarianServiceImpl;
+import com.abes.lms.service.UserServiceImpl;
 import com.abes.lms.util.InputValidatorUtil;
 
 import java.util.List;
 import java.util.Scanner;
 
-public class UI {
+public class OldUI {
     BookDaoImpl bookDAO = new BookDaoImpl();
     UserDAOImpl userDAO = new UserDAOImpl();
     LibrarianDAOImpl librarianDAO = new LibrarianDAOImpl();

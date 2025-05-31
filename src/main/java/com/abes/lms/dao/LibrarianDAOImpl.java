@@ -1,6 +1,5 @@
-package com.abes.lms.dao.implementation;
+package com.abes.lms.dao;
 
-import com.abes.lms.dao.LibrarianDAO;
 import com.abes.lms.dto.LibrarianDTO;
 import com.abes.lms.util.CollectionUtil;
 
