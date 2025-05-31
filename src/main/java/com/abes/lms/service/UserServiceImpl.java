@@ -44,35 +44,24 @@ public void borrowBook(String username, String title) {
         System.out.println(username + " borrowed " + title);
     } else {
         System.out.println("Book not available or out of stock.");
-
     }
 }
 @Override
 public void returnBook(String username, String title) {
     List<BookDTO> borrowed = CollectionUtil.getUserBorrowedBooks().get(username);
-    BookDTO findBook=null;
-    for(BookDTO book :borrowed){
-        if(book.getTitle().equals(title)){
-            findBook=book;
-            break;
-            // Use your DTO method
-        }
+    BookDTO findBook = borrowed.stream()
+            .filter(book -> book.getTitle().equalsIgnoreCase(title.trim()))
+            .findFirst()
+            .orElse(null);
+
+    if(findBook==null){
+        System.out.println("No books borrowed by user: " + username);
+        return;
     }
-    if(findBook==null) return;
     findBook.increaseQuantity();
     borrowed.remove(findBook);
+    System.out.println("Book Returned");
     CollectionUtil.getUserBorrowedBooks().put(username, borrowed);
-
-
-//    if (borrowed != null && borrowed.remove(title)) {
-//        BookDTO book = bookService.getBookByTitle(title);
-//        if (book != null) {
-//            book.increaseQuantity(); // Use your DTO method
-//        }
-//        System.out.println(username + " returned " + title);
-//    } else {
-//        System.out.println("Book not found in " + username + "'s borrowed list.");
-//    }
 }
 
     @Override
