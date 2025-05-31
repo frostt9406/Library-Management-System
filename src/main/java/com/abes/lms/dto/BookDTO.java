@@ -28,9 +28,13 @@ public class BookDTO {
     public void increaseQuantity() { quantity++; }
     public void decreaseQuantity() { if (quantity > 0) quantity--; }
 
+
+
     @Override
     public String toString() {
-        return String.format("BookDTO[ID=%d, Title='%s', Author='%s', Rating=%.1f, Quantity=%d]",
-                id, title, author, rating, quantity);
+        return "BookDTO{" +
+                "title='" + title + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

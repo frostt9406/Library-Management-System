@@ -25,17 +25,17 @@ public class BookServiceImpl implements BookServices {
 
     @Override
     public boolean removeBook(String title) {
-        return CollectionUtil.getBooks().removeIf(book -> book.getTitle().equalsIgnoreCase(title));
+        return bookDAO.removeBook(title);
     }
 
     @Override
     public boolean isBookPresent(String title) {
-        return CollectionUtil.getBooks().stream().anyMatch(book -> book.getTitle().equalsIgnoreCase(title));
+        return CollectionUtil.getBookList().stream().anyMatch(book -> book.getTitle().equalsIgnoreCase(title));
     }
 
     @Override
     public boolean isBookPresentById(int id) {
-        return CollectionUtil.getBooks().stream().anyMatch(book-> book.getId() == id );
+        return CollectionUtil.getBookList().stream().anyMatch(book-> book.getId() == id );
     }
 
     @Override
@@ -45,12 +45,12 @@ public class BookServiceImpl implements BookServices {
 
     @Override
     public List<BookDTO> getAllBooks() {
-        return new ArrayList<>(CollectionUtil.getBooks());
+        return new ArrayList<>(CollectionUtil.getBookList());
     }
 
     @Override
     public BookDTO getBookByTitle(String title) {
-        return CollectionUtil.getBooks().stream()
+        return CollectionUtil.getBookList().stream()
                 .filter(book -> book.getTitle().equalsIgnoreCase(title))
                 .findFirst()
                 .orElse(null);
@@ -58,7 +58,7 @@ public class BookServiceImpl implements BookServices {
 
     @Override
     public BookDTO getBookById(int id) {
-        return CollectionUtil.getBooks().stream()
+        return CollectionUtil.getBookList().stream()
                 .filter(book -> book.getId() == id)
                 .findFirst()
                 .orElse(null);
@@ -66,21 +66,21 @@ public class BookServiceImpl implements BookServices {
 
     @Override
     public List<BookDTO> sortBooksById() {
-        return CollectionUtil.getBooks().stream()
+        return CollectionUtil.getBookList().stream()
                 .sorted(Comparator.comparingInt(BookDTO::getId))
                 .toList();
     }
 
     @Override
     public List<BookDTO> sortBooksByRating() {
-        return CollectionUtil.getBooks().stream()
+        return CollectionUtil.getBookList().stream()
                 .sorted(Comparator.comparingDouble(BookDTO::getRating).reversed())
                 .toList();
     }
 
     @Override
     public List<BookDTO> sortBooksByTitle() {
-        return CollectionUtil.getBooks().stream()
+        return CollectionUtil.getBookList().stream()
                 .sorted(Comparator.comparing(BookDTO::getTitle))
                 .toList();
     }
