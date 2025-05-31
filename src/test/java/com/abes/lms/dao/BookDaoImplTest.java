@@ -1,6 +1,5 @@
 package com.abes.lms.dao;
 
-import com.abes.lms.dao.implementation.BookDaoImpl;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.util.CollectionUtil;
 import org.junit.jupiter.api.BeforeEach;
