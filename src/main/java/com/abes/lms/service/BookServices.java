@@ -4,7 +4,7 @@ import com.abes.lms.dto.BookDTO;
 import java.util.List;
 
 public interface BookServices {
-    boolean addBook(BookDTO book);
+    boolean addBook(String title,String author,int id,double rating,int quantity);
     boolean removeBook(String title);
     boolean isBookPresent(String title);
     boolean isBookPresentById(int id);

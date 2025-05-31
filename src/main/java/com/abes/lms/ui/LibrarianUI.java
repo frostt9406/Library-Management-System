@@ -26,7 +26,7 @@ public class LibrarianUI {
 
             librarianServices.LibrarianLogin(username, password);
 
-            int choice;
+            String choice;
             do {
                 System.out.println("\n=== Librarian Menu ===");
                 System.out.println("1. Add Book");
@@ -35,18 +35,19 @@ public class LibrarianUI {
                 System.out.println("4. View All Users");
                 System.out.println("0. Logout");
                 System.out.print("Enter your choice: ");
-                choice = Integer.parseInt(sc.nextLine());
+                choice = sc.nextLine();
 
                 switch (choice) {
-                    case 1:
+                    case "1":
                         System.out.print("Enter book ID: ");
                         int id = Integer.parseInt(sc.nextLine());
                         if (bookServices.isBookPresentById(id)) {
                             System.out.println("Book already exists with ID " + id + ". Please update the quantity instead.");
                             System.out.print("Enter quantity to update: ");
                             int quantity = Integer.parseInt(sc.nextLine());
-                            // Optionally add logic here to update quantity
-                            return;
+                            bookServices.addQuantity(bookServices.getBookById(id), quantity);
+                            System.out.println("Book Updated successfully.");
+                            break;
                         }
 
                         System.out.print("Enter book title: ");
@@ -62,29 +63,28 @@ public class LibrarianUI {
                         bookDAO.addBook(book);
                         System.out.println("Book added successfully.");
                         break;
-                    case 2:
+                    case "2":
                         System.out.print("Enter book title to remove: ");
                         String removeTitle = sc.nextLine();
                         bookDAO.removeBook(removeTitle);
                         System.out.println("Book removed if present.");
                         break;
-                    case 3:
+                    case "3":
                         displayBooks(bookDAO.getAllBooks());
                         break;
-                    case 4:
+                    case "4":
                         List<UserDTO> users = userDAO.getAllUsers();
                         for (UserDTO u : users) {
                             System.out.println(u);
                         }
                         break;
-                    case 0:
+                    case "0":
                         System.out.println("Logged out.");
                         break;
                     default:
                         System.out.println("Invalid choice.");
                 }
-
-            } while (choice != 0);
+            } while (!choice.equals("0"));
 
         } catch (InvalidInputException | NumberFormatException e) {
             System.out.println("Error: " + e.getMessage());
