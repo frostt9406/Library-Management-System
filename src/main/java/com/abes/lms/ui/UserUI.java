@@ -1,11 +1,10 @@
 package com.abes.lms.ui;
 
-import com.abes.lms.dto.BookDTO;
 import com.abes.lms.exception.InvalidInputException;
+import com.abes.lms.service.BookServices;
 import com.abes.lms.service.UserServices;
 import com.abes.lms.util.InputValidatorUtil;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class UserUI {
@@ -38,7 +37,7 @@ public class UserUI {
         }
     }
 
-    public static void handleUserLogin(UserServices userService, Scanner sc) {
+    public static void handleUserLogin(UserServices userService,BookServices bookServices,Scanner sc) {
         try {
             System.out.print("Enter username: ");
             String username = sc.nextLine();
@@ -48,7 +47,11 @@ public class UserUI {
             String password = sc.nextLine();
             InputValidatorUtil.validate(password);
 
-            userService.userLogin(username, password);
+            boolean isUserValid = userService.userLogin(username, password);
+            if(!isUserValid){
+                System.out.println("Invalid Credentials");
+                return;
+            }
 
             String choice;
             do {
@@ -65,7 +68,7 @@ public class UserUI {
 
                 switch (choice) {
                     case "1":
-                        displayBooks(userService.viewBooks());
+                        bookServices.getAllBooks().forEach(System.out::println);
                         break;
                     case "2":
                         System.out.print("Enter book title to borrow: ");
@@ -78,13 +81,13 @@ public class UserUI {
                         userService.returnBook(username, returnTitle);
                         break;
                     case "4":
-                        displayBooks(userService.sortBooksById());
+                        userService.sortBooksById().forEach(System.out::println);
                         break;
                     case "5":
-                        displayBooks(userService.sortBooksByRating());
+                        userService.sortBooksByRating().forEach(System.out::println);;
                         break;
                     case "6":
-                        displayBooks(userService.sortBooksByTitle());
+                        userService.sortBooksByTitle().forEach(System.out::println);;
                         break;
                     case "0":
                         System.out.println("Logged out.");
@@ -99,13 +102,5 @@ public class UserUI {
         }
     }
 
-    private static void displayBooks(List<BookDTO> books) {
-        if (books.isEmpty()) {
-            System.out.println("No books available.");
-        } else {
-            for (BookDTO b : books) {
-                System.out.println(b);
-            }
-        }
-    }
+
 }

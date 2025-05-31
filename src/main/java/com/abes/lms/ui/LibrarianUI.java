@@ -3,18 +3,17 @@ package com.abes.lms.ui;
 import com.abes.lms.dao.BookDaoImpl;
 import com.abes.lms.dao.UserDAOImpl;
 import com.abes.lms.dto.BookDTO;
-import com.abes.lms.dto.UserDTO;
 import com.abes.lms.exception.InvalidInputException;
-import com.abes.lms.service.LibrarianServices;
 import com.abes.lms.service.BookServices;
+import com.abes.lms.service.LibrarianServices;
+import com.abes.lms.service.UserServices;
 import com.abes.lms.util.InputValidatorUtil;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class LibrarianUI {
 
-    public static void handleLibrarianLogin(LibrarianServices librarianServices,BookServices bookServices, BookDaoImpl bookDAO, UserDAOImpl userDAO, Scanner sc) {
+    public static void handleLibrarianLogin(LibrarianServices librarianServices, BookServices bookServices, UserServices userServices, BookDaoImpl bookDAO, UserDAOImpl userDAO, Scanner sc) {
         try {
             System.out.print("Enter librarian username: ");
             String username = sc.nextLine();
@@ -24,8 +23,11 @@ public class LibrarianUI {
             String password = sc.nextLine();
             InputValidatorUtil.validate(password);
 
-            librarianServices.LibrarianLogin(username, password);
-
+            boolean isValidLibrarian = librarianServices.LibrarianLogin(username, password);
+            if(!isValidLibrarian){
+                System.out.println("Invalid Credentials");
+                return;
+            }
             String choice;
             do {
                 System.out.println("\n=== Librarian Menu ===");
@@ -66,17 +68,15 @@ public class LibrarianUI {
                     case "2":
                         System.out.print("Enter book title to remove: ");
                         String removeTitle = sc.nextLine();
-                        bookDAO.removeBook(removeTitle);
-                        System.out.println("Book removed if present.");
+                        boolean isBookRemoved = bookServices.removeBook(removeTitle);
+                        System.out.println(isBookRemoved?"Removed Successfully":"Failed To Remove");
                         break;
                     case "3":
-                        displayBooks(bookDAO.getAllBooks());
+                        bookServices.getAllBooks().forEach(System.out::println);
                         break;
                     case "4":
-                        List<UserDTO> users = userDAO.getAllUsers();
-                        for (UserDTO u : users) {
-                            System.out.println(u);
-                        }
+//                        userServices.getAllUsers().forEach(System.out::println);
+                        userServices.borrowedBookByEachUser();
                         break;
                     case "0":
                         System.out.println("Logged out.");
@@ -91,13 +91,4 @@ public class LibrarianUI {
         }
     }
 
-    private static void displayBooks(List<BookDTO> books) {
-        if (books.isEmpty()) {
-            System.out.println("No books available.");
-        } else {
-            for (BookDTO b : books) {
-                System.out.println(b);
-            }
-        }
-    }
 }

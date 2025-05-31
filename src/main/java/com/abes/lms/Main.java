@@ -47,10 +47,10 @@ public class Main {
                     UserUI.registerUser(userService, sc);
                     break;
                 case 2:
-                    UserUI.handleUserLogin(userService, sc);
+                    UserUI.handleUserLogin(userService,bookServices, sc);
                     break;
                 case 3:
-                    LibrarianUI.handleLibrarianLogin(librarianServices, bookServices,bookDAO, userDAO, sc);
+                    LibrarianUI.handleLibrarianLogin(librarianServices, bookServices,userService,bookDAO, userDAO, sc);
                     break;
                 case 0:
                     running = false;

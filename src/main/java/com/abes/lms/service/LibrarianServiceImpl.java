@@ -12,15 +12,11 @@ public class LibrarianServiceImpl implements LibrarianServices {
     }
 
     @Override
-    public void LibrarianLogin(String username, String password) {
+    public boolean LibrarianLogin(String username, String password) {
         LibrarianDTO librarian = librarianDAO.librarianLogin(username, password);
-        if (librarian == null) {
-            System.out.println("Invalid credentials.");
-            return;
-        }
+        return librarian != null;
     }
 
-    
 
     @Override
     public boolean removeBook(String title) {
