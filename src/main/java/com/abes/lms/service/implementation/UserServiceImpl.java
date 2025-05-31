@@ -14,7 +14,7 @@ public class UserServiceImpl implements UserServices {
         this.bookService = bookService;
     }
 
-    @Override
+    /*@Override
     public void borrowBook(String username, String title) {
         if (bookService.isBookPresent(title)) {
             userBorrowedBooks
@@ -23,6 +23,20 @@ public class UserServiceImpl implements UserServices {
             System.out.println(username + " borrowed " + title);
         } else {
             System.out.println("Book not available.");
+        }
+    }*/
+    @Override
+    public void borrowBook(String username, String title) {
+        BookDTO book = bookService.getBookByTitle(title);
+
+        if (book != null && book.getQuantity() > 0) {
+            book.setQuantity(book.getQuantity() - 1); // Decrease quantity
+            userBorrowedBooks
+                    .computeIfAbsent(username, k -> new ArrayList<>())
+                    .add(title);
+            System.out.println(username + " borrowed " + title);
+        } else {
+            System.out.println("Book not available or out of stock.");
         }
     }
 

@@ -22,6 +22,7 @@ public class BookDTO {
     public int getQuantity() { return quantity; }
 
     public void setId(int id) { this.id = id; }
+    public void setQuantity(int quantity) {this.quantity=quantity; }
 
     public void increaseQuantity() { quantity++; }
     public void decreaseQuantity() { if (quantity > 0) quantity--; }
