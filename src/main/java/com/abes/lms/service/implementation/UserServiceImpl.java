@@ -14,6 +14,7 @@ public class UserServiceImpl implements UserServices {
         this.bookService = bookService;
     }
 
+
 @Override
 public void borrowBook(String username, String title) {
     BookDTO book = bookService.getBookByTitle(title);
@@ -25,6 +26,7 @@ public void borrowBook(String username, String title) {
         System.out.println(username + " borrowed " + title);
     } else {
         System.out.println("Book not available or out of stock.");
+
     }
 }
 @Override
