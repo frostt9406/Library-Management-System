@@ -7,6 +7,10 @@ import com.abes.lms.util.CollectionUtil;
 
 import java.util.*;
 
+/**
+ * Implementation of the UserServices interface.
+ * Handles user registration, login, and book borrowing/returning operations.
+ */
 public class UserServiceImpl implements UserServices {
     private BookServices bookService;
     private  UserDAO userDAO;
@@ -22,17 +26,22 @@ public class UserServiceImpl implements UserServices {
         this.userDAO=userDAO;
     }
 
+    // Registers a new user.
 @Override
 public boolean userRegister(String username,String password,String email) {
     UserDTO user = new UserDTO(username, password, email);
     userDAO.userRegister(user);
     return true;
 }
+
+//Verifies user login credentials.
 @Override
 public boolean userLogin(String username,String password) {
         UserDTO user = userDAO.userLogin(username,password);
     return user!=null;
 }
+
+//Allows a user to borrow a book if available.
 @Override
 public void borrowBook(String username, String title) {
     BookDTO book = bookService.getBookByTitle(title);
@@ -46,6 +55,8 @@ public void borrowBook(String username, String title) {
         System.out.println("Book not available or out of stock.");
     }
 }
+
+//Allows a user to return a previously borrowed book.
 @Override
 public void returnBook(String username, String title) {
     List<BookDTO> borrowed = CollectionUtil.getUserBorrowedBooks().get(username);
@@ -64,37 +75,43 @@ public void returnBook(String username, String title) {
     CollectionUtil.getUserBorrowedBooks().put(username, borrowed);
 }
 
+    //Fetches a user by username.
     @Override
     public UserDTO getUser(String username) {
         return userDAO.getUser(username);
     }
+
+    //Returns all registered users.
 @Override
     public List<UserDTO> getAllUsers() {
         return new ArrayList<>(CollectionUtil.getUserList());
     }
 
+    //Prints the books borrowed by each user.
     @Override
     public void borrowedBookByEachUser(){
         System.out.println(CollectionUtil.getUserBorrowedBooks());
     }
 
-
-
+    //Returns the full list of books available.
     @Override
     public List<BookDTO> viewBooks() {
         return bookService.getAllBooks();
     }
 
+    //Returns a list of books sorted by ID.
     @Override
     public List<BookDTO> sortBooksById() {
         return bookService.sortBooksById();
     }
 
+    //Returns a list of books sorted by rating.
     @Override
     public List<BookDTO> sortBooksByRating() {
         return bookService.sortBooksByRating();
     }
 
+    //Returns a list of books sorted by title.
     @Override
     public List<BookDTO> sortBooksByTitle() {
         return bookService.sortBooksByTitle();

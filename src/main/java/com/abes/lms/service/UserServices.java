@@ -4,6 +4,9 @@ import com.abes.lms.dto.UserDTO;
 
 import java.util.List;
 
+/**
+ * Interface defining operations related to user management and user-book interactions.
+ */
 public interface UserServices {
     boolean userRegister(String username,String password,String email);
     boolean userLogin(String username,String password);
