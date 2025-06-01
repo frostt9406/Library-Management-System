@@ -2,10 +2,11 @@ package com.abes.lms.dao;
 
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.util.CollectionUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,160 +14,140 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BookDaoImplTest {
 
     private BookDAO bookDAO;
+    private List<BookDTO> mockBookList;
+    private MockedStatic<CollectionUtil> mockedStatic;
 
     @BeforeEach
     public void setup() {
-        // Initializing the BookDAO implementation
+        mockBookList = new ArrayList<>();
+        mockedStatic = Mockito.mockStatic(CollectionUtil.class);
+        mockedStatic.when(CollectionUtil::getBookList).thenReturn(mockBookList);
         bookDAO = new BookDaoImpl();
     }
 
-    // Test for addBook (Valid)
+    @AfterEach
+    public void tearDown() {
+        mockedStatic.close();
+    }
+    //test case to add a book
     @Test
     public void testAddBook_valid() {
-        // Valid: Adding a book that does not already exist
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
         boolean result = bookDAO.addBook(book);
-
-        assertTrue(result);  // The book should be added successfully
-        assertNotNull(bookDAO.getBookById(101));  // The book should now be retrievable by its ID
+        assertTrue(result);
+        assertEquals(book, bookDAO.getBookById(101));
     }
-
-    // Test for addBook (Invalid - Duplicate Title)
+    // test case for duplicate title
     @Test
     public void testAddBook_invalid_duplicateTitle() {
-        // Invalid: Adding a book with a title that already exists
         BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
         BookDTO book2 = new BookDTO("Clean Code", "Robert C. Martin", 102, 4.9, 10);
 
-        bookDAO.addBook(book1);  // Adding the first book
-        boolean result = bookDAO.addBook(book2);  // Trying to add a book with the same title
+        mockBookList.add(book1); // Already exists by title
 
-        assertFalse(result);  // The book should not be added because the title is duplicate
+        boolean result = bookDAO.addBook(book2);
+        assertFalse(result);
     }
 
-    // Test for addBook (Invalid - Duplicate ID)
     @Test
     public void testAddBook_invalid_duplicateId() {
-        // Invalid: Adding a book with an ID that already exists
         BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
         BookDTO book2 = new BookDTO("Effective Java", "Joshua Bloch", 101, 4.7, 3);
 
-        bookDAO.addBook(book1);  // Adding the first book
-        boolean result = bookDAO.addBook(book2);  // Trying to add a book with the same ID
+        mockBookList.add(book1); // Already exists by ID
 
-        assertFalse(result);  // The book should not be added because the ID is duplicate
+        boolean result = bookDAO.addBook(book2);
+        assertFalse(result);
     }
 
-    // Test for removeBook (Valid)
     @Test
     public void testRemoveBook_valid() {
-        // Valid: Removing a book that exists
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        bookDAO.addBook(book);  // Adding the book to the list
+        mockBookList.add(book);
 
-        boolean result = bookDAO.removeBook("Clean Code");  // Removing the book
-        assertTrue(result);  // The book should be removed successfully
-        assertNull(bookDAO.getBookByTitle("Clean Code"));  // The book should no longer be in the list
+        boolean result = bookDAO.removeBook("Clean Code");
+        assertTrue(result);
+        assertNull(bookDAO.getBookByTitle("Clean Code"));
     }
 
-    // Test for removeBook (Invalid - Book Not Found)
     @Test
     public void testRemoveBook_invalid_notFound() {
-        // Invalid: Trying to remove a book that does not exist
         boolean result = bookDAO.removeBook("Non Existent Book");
-        assertFalse(result);  // The removal should fail because the book doesn't exist
+        assertFalse(result);
     }
 
-    // Test for isBookPresent (Valid)
     @Test
     public void testIsBookPresent_valid() {
-        // Valid: Checking if a book exists in the list
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        bookDAO.addBook(book);  // Adding the book to the list
+        mockBookList.add(book);
 
         boolean result = bookDAO.isBookPresent("Clean Code");
-        assertTrue(result);  // The book should be found
+        assertTrue(result);
     }
 
-    // Test for isBookPresent (Invalid - Book Not Found)
     @Test
     public void testIsBookPresent_invalid_notFound() {
-        // Invalid: Checking for a book that doesn't exist
         boolean result = bookDAO.isBookPresent("Non Existent Book");
-        assertFalse(result);  // The book should not be found
+        assertFalse(result);
     }
 
-    // Test for getAllBooks (Valid)
     @Test
     public void testGetAllBooks_valid() {
-        // Valid: Retrieving all books
         BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
         BookDTO book2 = new BookDTO("Effective Java", "Joshua Bloch", 102, 4.7, 3);
-        bookDAO.addBook(book1);
-        bookDAO.addBook(book2);  // Adding two books to the list
+        mockBookList.add(book1);
+        mockBookList.add(book2);
 
-        List<BookDTO> books = bookDAO.getAllBooks();
-        assertNotNull(books);  // Should return a non-null list
-        assertEquals(2, books.size());  // Should contain exactly two books
+        List<BookDTO> result = bookDAO.getAllBooks();
+        assertNotNull(result);
+        assertEquals(2, result.size());
     }
 
-    // Test for getBookByTitle (Valid)
     @Test
     public void testGetBookByTitle_valid() {
-        // Valid: Retrieving a book by its title
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        bookDAO.addBook(book);  // Adding the book to the list
+        mockBookList.add(book);
 
         BookDTO result = bookDAO.getBookByTitle("Clean Code");
-        assertNotNull(result);  // The book should be found
-        assertEquals("Clean Code", result.getTitle());  // The book title should match
+        assertNotNull(result);
+        assertEquals("Clean Code", result.getTitle());
     }
 
-    // Test for getBookByTitle (Invalid - Book Not Found)
     @Test
     public void testGetBookByTitle_invalid_notFound() {
-        // Invalid: Trying to retrieve a book that does not exist
         BookDTO result = bookDAO.getBookByTitle("Non Existent Book");
-        assertNull(result);  // The book should not be found, so it should return null
+        assertNull(result);
     }
 
-    // Test for getBookById (Valid)
     @Test
     public void testGetBookById_valid() {
-        // Valid: Retrieving a book by its ID
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        bookDAO.addBook(book);  // Adding the book to the list
+        mockBookList.add(book);
 
         BookDTO result = bookDAO.getBookById(101);
-        assertNotNull(result);  // The book should be found
-        assertEquals(101, result.getId());  // The book ID should match
+        assertNotNull(result);
+        assertEquals(101, result.getId());
     }
 
-    // Test for getBookById (Invalid - Book Not Found)
     @Test
     public void testGetBookById_invalid_notFound() {
-        // Invalid: Trying to retrieve a book by an ID that does not exist
         BookDTO result = bookDAO.getBookById(999);
-        assertNull(result);  // The book should not be found, so it should return null
+        assertNull(result);
     }
 
-    // Test for addQuantity (Valid)
     @Test
     public void testAddQuantity_valid() {
-        // Valid: Adding quantity to a book
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        bookDAO.addBook(book);  // Adding the book to the list
+        mockBookList.add(book);
 
-        boolean result = bookDAO.addQuantity(book, 5);  // Adding 5 more copies
-        assertTrue(result);  // The operation should succeed
-        assertEquals(10, book.getQuantity());  // The quantity should now be 10
+        boolean result = bookDAO.addQuantity(book, 5);
+        assertTrue(result);
+        assertEquals(10, book.getQuantity());
     }
 
-    // Test for addQuantity (Invalid - Null Book)
     @Test
     public void testAddQuantity_invalid_nullBook() {
-        // Invalid: Adding quantity to a null book
         boolean result = bookDAO.addQuantity(null, 5);
-        assertFalse(result);  // The operation should fail because the book is null
+        assertFalse(result);
     }
 }
