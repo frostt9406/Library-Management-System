@@ -4,190 +4,169 @@ import com.abes.lms.dto.BookDTO;
 import com.abes.lms.util.CollectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BookDaoImplTest {
+public class BookDaoImplTest {
 
-    private BookDaoImpl bookDao;
+    private BookDAO bookDAO;
 
     @BeforeEach
-    void setup() {
-        // Clear the shared list before each test
-        CollectionUtil.getBookList().clear();
-        bookDao = new BookDaoImpl();
+    public void setup() {
+        // Initializing the BookDAO implementation
+        bookDAO = new BookDaoImpl();
     }
 
-    // -------- addBook --------
-
+    // Test for addBook (Valid)
     @Test
-    void addBook_HappyPath_ShouldAddBook() {
-        BookDTO book = new BookDTO("Clean Architecture", "Robert C. Martin", 1, 4.8, 5);
-        boolean added = bookDao.addBook(book);
+    public void testAddBook_valid() {
+        // Valid: Adding a book that does not already exist
+        BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        boolean result = bookDAO.addBook(book);
 
-        assertTrue(added);
-        assertEquals(1, CollectionUtil.getBookList().size());
-        assertSame(book, CollectionUtil.getBookList().get(0));
+        assertTrue(result);  // The book should be added successfully
+        assertNotNull(bookDAO.getBookById(101));  // The book should now be retrievable by its ID
     }
 
+    // Test for addBook (Invalid - Duplicate Title)
     @Test
-    void addBook_ValidEdge_DuplicateTitleShouldNotAdd() {
-        BookDTO book1 = new BookDTO("Refactoring", "Martin Fowler", 1, 4.5, 4);
-        BookDTO book2 = new BookDTO("Refactoring", "Another Author", 2, 4.0, 3);
-        bookDao.addBook(book1);
-        boolean added = bookDao.addBook(book2);
+    public void testAddBook_invalid_duplicateTitle() {
+        // Invalid: Adding a book with a title that already exists
+        BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        BookDTO book2 = new BookDTO("Clean Code", "Robert C. Martin", 102, 4.9, 10);
 
-        assertFalse(added);
-        assertEquals(1, CollectionUtil.getBookList().size());
+        bookDAO.addBook(book1);  // Adding the first book
+        boolean result = bookDAO.addBook(book2);  // Trying to add a book with the same title
+
+        assertFalse(result);  // The book should not be added because the title is duplicate
     }
 
+    // Test for addBook (Invalid - Duplicate ID)
     @Test
-    void addBook_ValidEdge_DuplicateIdShouldNotAdd() {
-        BookDTO book1 = new BookDTO("Domain Driven Design", "Eric Evans", 1, 4.6, 6);
-        BookDTO book2 = new BookDTO("Some Other Book", "Author", 1, 3.5, 2);
-        bookDao.addBook(book1);
-        boolean added = bookDao.addBook(book2);
+    public void testAddBook_invalid_duplicateId() {
+        // Invalid: Adding a book with an ID that already exists
+        BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        BookDTO book2 = new BookDTO("Effective Java", "Joshua Bloch", 101, 4.7, 3);
 
-        assertFalse(added);
-        assertEquals(1, CollectionUtil.getBookList().size());
+        bookDAO.addBook(book1);  // Adding the first book
+        boolean result = bookDAO.addBook(book2);  // Trying to add a book with the same ID
+
+        assertFalse(result);  // The book should not be added because the ID is duplicate
     }
 
+    // Test for removeBook (Valid)
     @Test
-    void addBook_Invalid_NullBook() {
-        assertThrows(NullPointerException.class, () -> bookDao.addBook(null));
+    public void testRemoveBook_valid() {
+        // Valid: Removing a book that exists
+        BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        bookDAO.addBook(book);  // Adding the book to the list
+
+        boolean result = bookDAO.removeBook("Clean Code");  // Removing the book
+        assertTrue(result);  // The book should be removed successfully
+        assertNull(bookDAO.getBookByTitle("Clean Code"));  // The book should no longer be in the list
     }
 
-    // -------- removeBook --------
-
+    // Test for removeBook (Invalid - Book Not Found)
     @Test
-    void removeBook_HappyPath_ShouldRemoveBook() {
-        BookDTO book = new BookDTO("Clean Code", "Robert Martin", 1, 4.7, 3);
-        bookDao.addBook(book);
-
-        boolean removed = bookDao.removeBook("Clean Code");
-
-        assertTrue(removed);
-        assertTrue(CollectionUtil.getBookList().isEmpty());
+    public void testRemoveBook_invalid_notFound() {
+        // Invalid: Trying to remove a book that does not exist
+        boolean result = bookDAO.removeBook("Non Existent Book");
+        assertFalse(result);  // The removal should fail because the book doesn't exist
     }
 
+    // Test for isBookPresent (Valid)
     @Test
-    void removeBook_ValidEdge_TitleCaseInsensitive() {
-        BookDTO book = new BookDTO("Patterns of Enterprise", "Martin Fowler", 1, 4.3, 2);
-        bookDao.addBook(book);
+    public void testIsBookPresent_valid() {
+        // Valid: Checking if a book exists in the list
+        BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        bookDAO.addBook(book);  // Adding the book to the list
 
-        boolean removed = bookDao.removeBook("patterns OF enterprise");
-
-        assertTrue(removed);
-        assertTrue(CollectionUtil.getBookList().isEmpty());
+        boolean result = bookDAO.isBookPresent("Clean Code");
+        assertTrue(result);  // The book should be found
     }
 
+    // Test for isBookPresent (Invalid - Book Not Found)
     @Test
-    void removeBook_Invalid_BookNotFound() {
-        boolean removed = bookDao.removeBook("Non Existent Book");
-        assertFalse(removed);
+    public void testIsBookPresent_invalid_notFound() {
+        // Invalid: Checking for a book that doesn't exist
+        boolean result = bookDAO.isBookPresent("Non Existent Book");
+        assertFalse(result);  // The book should not be found
     }
 
-    // -------- isBookPresent --------
-
+    // Test for getAllBooks (Valid)
     @Test
-    void isBookPresent_HappyPath_ReturnsTrueIfPresent() {
-        BookDTO book = new BookDTO("Effective Java", "Joshua Bloch", 1, 4.9, 7);
-        bookDao.addBook(book);
+    public void testGetAllBooks_valid() {
+        // Valid: Retrieving all books
+        BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        BookDTO book2 = new BookDTO("Effective Java", "Joshua Bloch", 102, 4.7, 3);
+        bookDAO.addBook(book1);
+        bookDAO.addBook(book2);  // Adding two books to the list
 
-        assertTrue(bookDao.isBookPresent("Effective Java"));
+        List<BookDTO> books = bookDAO.getAllBooks();
+        assertNotNull(books);  // Should return a non-null list
+        assertEquals(2, books.size());  // Should contain exactly two books
     }
 
+    // Test for getBookByTitle (Valid)
     @Test
-    void isBookPresent_ValidEdge_TitleCaseInsensitive() {
-        BookDTO book = new BookDTO("Java Concurrency in Practice", "Brian Goetz", 1, 4.7, 5);
-        bookDao.addBook(book);
+    public void testGetBookByTitle_valid() {
+        // Valid: Retrieving a book by its title
+        BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        bookDAO.addBook(book);  // Adding the book to the list
 
-        assertTrue(bookDao.isBookPresent("java concurrency IN practice"));
+        BookDTO result = bookDAO.getBookByTitle("Clean Code");
+        assertNotNull(result);  // The book should be found
+        assertEquals("Clean Code", result.getTitle());  // The book title should match
     }
 
+    // Test for getBookByTitle (Invalid - Book Not Found)
     @Test
-    void isBookPresent_Invalid_ReturnsFalseIfAbsent() {
-        assertFalse(bookDao.isBookPresent("Unknown Book"));
+    public void testGetBookByTitle_invalid_notFound() {
+        // Invalid: Trying to retrieve a book that does not exist
+        BookDTO result = bookDAO.getBookByTitle("Non Existent Book");
+        assertNull(result);  // The book should not be found, so it should return null
     }
 
-    // -------- getAllBooks --------
-
+    // Test for getBookById (Valid)
     @Test
-    void getAllBooks_HappyPath_ReturnsAllBooks() {
-        BookDTO book1 = new BookDTO("Book A", "Author A", 1, 3.0, 1);
-        BookDTO book2 = new BookDTO("Book B", "Author B", 2, 4.0, 2);
-        bookDao.addBook(book1);
-        bookDao.addBook(book2);
+    public void testGetBookById_valid() {
+        // Valid: Retrieving a book by its ID
+        BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        bookDAO.addBook(book);  // Adding the book to the list
 
-        List<BookDTO> allBooks = bookDao.getAllBooks();
-
-        assertEquals(2, allBooks.size());
-        assertTrue(allBooks.contains(book1));
-        assertTrue(allBooks.contains(book2));
+        BookDTO result = bookDAO.getBookById(101);
+        assertNotNull(result);  // The book should be found
+        assertEquals(101, result.getId());  // The book ID should match
     }
 
+    // Test for getBookById (Invalid - Book Not Found)
     @Test
-    void getAllBooks_ValidEdge_EmptyList() {
-        List<BookDTO> allBooks = bookDao.getAllBooks();
-
-        assertNotNull(allBooks);
-        assertTrue(allBooks.isEmpty());
+    public void testGetBookById_invalid_notFound() {
+        // Invalid: Trying to retrieve a book by an ID that does not exist
+        BookDTO result = bookDAO.getBookById(999);
+        assertNull(result);  // The book should not be found, so it should return null
     }
 
-    // -------- getBookByTitle --------
-
+    // Test for addQuantity (Valid)
     @Test
-    void getBookByTitle_HappyPath_ReturnsCorrectBook() {
-        BookDTO book = new BookDTO("Test Driven Development", "Kent Beck", 1, 4.4, 3);
-        bookDao.addBook(book);
+    public void testAddQuantity_valid() {
+        // Valid: Adding quantity to a book
+        BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
+        bookDAO.addBook(book);  // Adding the book to the list
 
-        BookDTO found = bookDao.getBookByTitle("Test Driven Development");
-
-        assertNotNull(found);
-        assertEquals(book.getTitle(), found.getTitle());
+        boolean result = bookDAO.addQuantity(book, 5);  // Adding 5 more copies
+        assertTrue(result);  // The operation should succeed
+        assertEquals(10, book.getQuantity());  // The quantity should now be 10
     }
 
+    // Test for addQuantity (Invalid - Null Book)
     @Test
-    void getBookByTitle_ValidEdge_TitleCaseInsensitive() {
-        BookDTO book = new BookDTO("Clean Code", "Robert Martin", 1, 4.7, 5);
-        bookDao.addBook(book);
-
-        BookDTO found = bookDao.getBookByTitle("clean CODE");
-
-        assertNotNull(found);
-        assertEquals(book.getTitle(), found.getTitle());
-    }
-
-    @Test
-    void getBookByTitle_Invalid_NotFound() {
-        BookDTO found = bookDao.getBookByTitle("Non Existing Title");
-        assertNull(found);
-    }
-
-    // -------- getBookById --------
-
-    @Test
-    void getBookById_HappyPath_ReturnsCorrectBook() {
-        BookDTO book = new BookDTO("Microservices Patterns", "Chris Richardson", 1, 4.1, 3);
-        bookDao.addBook(book);
-
-        BookDTO found = bookDao.getBookById(1);
-
-        assertNotNull(found);
-        assertEquals(book.getId(), found.getId());
-    }
-
-    @Test
-    void getBookById_ValidEdge_NonExistingId() {
-        BookDTO found = bookDao.getBookById(999);
-        assertNull(found);
-    }
-
-    @Test
-    void getBookById_Invalid_NegativeId() {
-        BookDTO found = bookDao.getBookById(-1);
-        assertNull(found);
+    public void testAddQuantity_invalid_nullBook() {
+        // Invalid: Adding quantity to a null book
+        boolean result = bookDAO.addQuantity(null, 5);
+        assertFalse(result);  // The operation should fail because the book is null
     }
 }

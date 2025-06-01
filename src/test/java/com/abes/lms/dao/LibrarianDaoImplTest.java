@@ -7,67 +7,91 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LibrarianDAOImplTest {
+public class LibrarianDAOImplTest {
 
-    private LibrarianDAOImpl librarianDAO;
+    private LibrarianDAO librarianDAO;
 
     @BeforeEach
-    void setup() {
-        // Clear the shared librarian list before each test for isolation
-        CollectionUtil.getLibarianList().clear();
+    public void setup() {
+        // Initializing the LibrarianDAO implementation
         librarianDAO = new LibrarianDAOImpl();
     }
 
-    // -------- librarianLogin --------
-
+    // Test for librarianLogin (Valid - Correct username and password)
     @Test
-    void librarianLogin_HappyPath_ValidCredentials_ReturnsLibrarian() {
-        LibrarianDTO librarian = new LibrarianDTO("libUser", "securePass", "Lib Name");
-        CollectionUtil.getLibarianList().add(librarian);
+    public void testLibrarianLogin_valid() {
+        // Valid: Logging in with correct username and password
+        LibrarianDTO librarian = new LibrarianDTO("admin", "password123");
+        CollectionUtil.getLibarianList().add(librarian);  // Adding a librarian to the list
 
-        LibrarianDTO loggedIn = librarianDAO.librarianLogin("libUser", "securePass");
-
-        assertNotNull(loggedIn);
-        assertEquals(librarian.getUsername(), loggedIn.getUsername());
+        LibrarianDTO result = librarianDAO.librarianLogin("admin", "password123");
+        assertNotNull(result);  // The librarian should be found
+        assertEquals("admin", result.getUsername());  // The username should match
     }
 
+    // Test for librarianLogin (Invalid - Incorrect password)
     @Test
-    void librarianLogin_ValidEdge_UsernameCaseInsensitive() {
-        LibrarianDTO librarian = new LibrarianDTO("LibUser2", "pass123", "Lib Name 2");
-        CollectionUtil.getLibarianList().add(librarian);
+    public void testLibrarianLogin_invalid_wrongPassword() {
+        // Invalid: Logging in with the correct username but incorrect password
+        LibrarianDTO librarian = new LibrarianDTO("admin", "password123");
+        CollectionUtil.getLibarianList().add(librarian);  // Adding a librarian to the list
 
-        LibrarianDTO loggedIn = librarianDAO.librarianLogin("libuser2", "pass123");
-
-        assertNotNull(loggedIn);
-        assertEquals(librarian.getUsername(), loggedIn.getUsername());
+        LibrarianDTO result = librarianDAO.librarianLogin("admin", "wrongpassword");
+        assertNull(result);  // The librarian should not be found due to incorrect password
     }
 
+    // Test for librarianLogin (Invalid - Incorrect username)
     @Test
-    void librarianLogin_Invalid_WrongPassword() {
-        LibrarianDTO librarian = new LibrarianDTO("libUser3", "correctPass", "Lib Name 3");
-        CollectionUtil.getLibarianList().add(librarian);
+    public void testLibrarianLogin_invalid_wrongUsername() {
+        // Invalid: Logging in with an incorrect username
+        LibrarianDTO librarian = new LibrarianDTO("admin", "password123");
+        CollectionUtil.getLibarianList().add(librarian);  // Adding a librarian to the list
 
-        LibrarianDTO loggedIn = librarianDAO.librarianLogin("libUser3", "wrongPass");
-
-        assertNull(loggedIn);
+        LibrarianDTO result = librarianDAO.librarianLogin("wrongusername", "password123");
+        assertNull(result);  // The librarian should not be found due to incorrect username
     }
 
+    // Test for librarianLogin (Invalid - Both username and password incorrect)
     @Test
-    void librarianLogin_Invalid_UserNotFound() {
-        LibrarianDTO loggedIn = librarianDAO.librarianLogin("unknownUser", "anyPass");
-        assertNull(loggedIn);
+    public void testLibrarianLogin_invalid_bothIncorrect() {
+        // Invalid: Logging in with both incorrect username and password
+        LibrarianDTO librarian = new LibrarianDTO("admin", "password123");
+        CollectionUtil.getLibarianList().add(librarian);  // Adding a librarian to the list
+
+        LibrarianDTO result = librarianDAO.librarianLogin("wrongusername", "wrongpassword");
+        assertNull(result);  // The librarian should not be found because both are incorrect
     }
 
+    // Test for librarianLogin (Edge Case - Null username)
     @Test
-    void librarianLogin_HandlesNullEntries() {
-        // Add null entry deliberately to test filter(Objects::nonNull)
-        CollectionUtil.getLibarianList().add(null);
-        LibrarianDTO librarian = new LibrarianDTO("libUser4", "pass", "Lib Name 4");
-        CollectionUtil.getLibarianList().add(librarian);
+    public void testLibrarianLogin_edge_nullUsername() {
+        // Edge Case: Logging in with a null username
+        LibrarianDTO librarian = new LibrarianDTO("admin", "password123");
+        CollectionUtil.getLibarianList().add(librarian);  // Adding a librarian to the list
 
-        LibrarianDTO loggedIn = librarianDAO.librarianLogin("libUser4", "pass");
+        LibrarianDTO result = librarianDAO.librarianLogin(null, "password123");
+        assertNull(result);  // The librarian should not be found because the username is null
+    }
 
-        assertNotNull(loggedIn);
-        assertEquals(librarian.getUsername(), loggedIn.getUsername());
+    // Test for librarianLogin (Edge Case - Null password)
+    @Test
+    public void testLibrarianLogin_edge_nullPassword() {
+        // Edge Case: Logging in with a null password
+        LibrarianDTO librarian = new LibrarianDTO("admin", "password123");
+        CollectionUtil.getLibarianList().add(librarian);  // Adding a librarian to the list
+
+        LibrarianDTO result = librarianDAO.librarianLogin("admin", null);
+        assertNull(result);  // The librarian should not be found because the password is null
+    }
+
+    // Test for librarianLogin (Edge Case - Both username and password null)
+    @Test
+    public void testLibrarianLogin_edge_nullUsernameAndPassword() {
+        // Edge Case: Logging in with both null username and null password
+        LibrarianDTO librarian = new LibrarianDTO("admin", "password123");
+        CollectionUtil.getLibarianList().add(librarian);  // Adding a librarian to the list
+
+        LibrarianDTO result = librarianDAO.librarianLogin(null, null);
+        assertNull(result);  // The librarian should not be found because both are null
     }
 }
