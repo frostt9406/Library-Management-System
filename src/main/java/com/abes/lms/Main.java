@@ -36,7 +36,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         boolean running = true;
 
-        //main menu loop starts here
+        //main menu starts here
         while (running) {
             System.out.println("\n=== Welcome to the Library Management System ===");
             System.out.println("1. Register as User"); //new user registration
