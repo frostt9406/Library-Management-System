@@ -9,7 +9,14 @@ import java.util.Scanner;
 
 public class UserUI {
 
+    /**
+     * Handles user registration by prompting for username, password, and email.
+     * Validates input and checks for duplicate usernames before registration.
+     * userService: Service layer handling user-related logic
+     */
     public static void registerUser(UserServices userService, Scanner sc) {
+
+        //User login menu
         try {
             System.out.print("Enter username: ");
             String username = sc.nextLine();
@@ -23,11 +30,13 @@ public class UserUI {
             String email = sc.nextLine();
             InputValidatorUtil.validateEmail(email);
 
+            //Check if user already exists
             if (userService.getUser(username) != null) {
                 System.out.println("Username already exists. Please login instead.");
                 return;
             }
 
+            //register new user if user does not already exist
             if (userService.userRegister(username, password, email)) {
                 System.out.println("User registered successfully!");
             }
@@ -37,7 +46,15 @@ public class UserUI {
         }
     }
 
+    /**
+     * Handles user login and provides access to user functionalities like:
+     * viewing, borrowing, returning, and sorting books.
+     * userService:  Service layer for user operations
+     * bookServices: Service layer for book operations
+     */
     public static void handleUserLogin(UserServices userService,BookServices bookServices,Scanner sc) {
+
+        //prompt for username and password
         try {
             System.out.print("Enter username: ");
             String username = sc.nextLine();
@@ -47,6 +64,7 @@ public class UserUI {
             String password = sc.nextLine();
             InputValidatorUtil.validate(password);
 
+            //Authenticate the user
             boolean isUserValid = userService.userLogin(username, password);
             if(!isUserValid){
                 System.out.println("Invalid Credentials");
@@ -55,6 +73,7 @@ public class UserUI {
 
             String choice;
             do {
+                //Display the user menu
                 System.out.println("\n=== User Menu ===");
                 System.out.println("1. View All Books");
                 System.out.println("2. Borrow a Book");
@@ -67,28 +86,35 @@ public class UserUI {
                 choice = sc.nextLine();
 
                 switch (choice) {
+                    //Display all available books
                     case "1":
                         bookServices.getAllBooks().forEach(System.out::println);
                         break;
+                    //Borrow a book
                     case "2":
                         System.out.print("Enter book title to borrow: ");
                         String borrowTitle = sc.nextLine();
                         userService.borrowBook(username, borrowTitle);
                         break;
+                    //Return a borrowed book
                     case "3":
                         System.out.print("Enter book title to return: ");
                         String returnTitle = sc.nextLine();
                         userService.returnBook(username, returnTitle);
                         break;
+                    //Sort and display books by id
                     case "4":
                         userService.sortBooksById().forEach(System.out::println);
                         break;
+                    //sort and display books by rating
                     case "5":
-                        userService.sortBooksByRating().forEach(System.out::println);;
+                        userService.sortBooksByRating().forEach(System.out::println);
                         break;
+                    //sort and display books by title
                     case "6":
-                        userService.sortBooksByTitle().forEach(System.out::println);;
+                        userService.sortBooksByTitle().forEach(System.out::println);
                         break;
+                    //log out the user from session
                     case "0":
                         System.out.println("Logged out.");
                         break;
@@ -101,6 +127,4 @@ public class UserUI {
             System.out.println("Error: " + e.getMessage());
         }
     }
-
-
 }
