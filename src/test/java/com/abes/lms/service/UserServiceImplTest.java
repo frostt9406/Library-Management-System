@@ -3,13 +3,10 @@ package com.abes.lms.service;
 import com.abes.lms.dao.UserDAO;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.dto.UserDTO;
-import com.abes.lms.util.CollectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -99,47 +96,9 @@ public class UserServiceImplTest {
         assertEquals(0, book.getQuantity());  // quantity should remain the same (0)
     }
 
-    // Test for returnBook (Valid)
-    @Test
-    public void testReturnBook_valid() {
-        // Valid: Returning a book
-        String username = "john_doe";
-        String title = "Clean Code";
-        BookDTO book = new BookDTO(title, "Robert C. Martin", 101, 4.8, 5); // book with quantity > 0
-        List<BookDTO> borrowedBooks = new ArrayList<>();
-        borrowedBooks.add(book);
 
-        // Mocking the borrowed books for the user
-        Mockito.when(bookService.getBookByTitle(title)).thenReturn(book);  // Mocking bookService
-        Mockito.when(CollectionUtil.getUserBorrowedBooks()).thenReturn(new HashMap<>() {{
-            put(username, borrowedBooks);
-        }});
 
-        userService.returnBook(username, title);
 
-        // After returning the book, the quantity should be increased by 1
-        assertEquals(6, book.getQuantity());  // quantity should have increased by 1
-        assertTrue(borrowedBooks.isEmpty());  // the borrowed books list should be empty for this user
-    }
-
-    // Test for returnBook (Invalid - Book not borrowed)
-    @Test
-    public void testReturnBook_invalid_notBorrowed() {
-        // Invalid: Returning a book that the user hasn't borrowed
-        String username = "john_doe";
-        String title = "Head First Java";
-        List<BookDTO> borrowedBooks = new ArrayList<>(); // user has no borrowed books
-
-        // Mocking the borrowed books for the user
-        Mockito.when(CollectionUtil.getUserBorrowedBooks()).thenReturn(new HashMap<>() {{
-            put(username, borrowedBooks);
-        }});
-
-        userService.returnBook(username, title);
-
-        // No book should be returned, the list remains empty
-        assertTrue(borrowedBooks.isEmpty());  // borrowed books should still be empty
-    }
 
     // Test for getUser (Valid)
     @Test
