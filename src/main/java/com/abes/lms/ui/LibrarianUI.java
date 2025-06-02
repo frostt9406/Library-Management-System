@@ -4,6 +4,7 @@ import com.abes.lms.dao.BookDaoImpl;
 import com.abes.lms.dao.UserDAOImpl;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.exception.InvalidInputException;
+import com.abes.lms.exception.InvalidIntegerException;
 import com.abes.lms.service.BookServices;
 import com.abes.lms.service.LibrarianServices;
 import com.abes.lms.service.UserServices;
@@ -55,8 +56,20 @@ public class LibrarianUI {
                 switch (choice) {
                     //Add or update book
                     case "1":
-                        System.out.print("Enter book ID: ");
-                        int id = Integer.parseInt(sc.nextLine());
+                        String inputId;
+                        int id;
+                        while(true){
+                            System.out.print("Enter book ID: ");
+                            inputId = sc.nextLine();
+                        try{
+                            InputValidatorUtil.validateInteger(inputId);
+                            id=Integer.parseInt(inputId);
+                            break;
+                        }
+                        catch (InvalidIntegerException e) {
+                            System.out.println(e.getMessage());
+                            }
+                        }
                         if (bookServices.isBookPresentById(id)) {
                             System.out.println("Book already exists with ID " + id + ". Please update the quantity instead.");
                             System.out.print("Enter quantity to update: ");
