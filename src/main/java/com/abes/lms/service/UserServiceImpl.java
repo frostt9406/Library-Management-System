@@ -90,7 +90,15 @@ public void returnBook(String username, String title) {
     //Prints the books borrowed by each user.
     @Override
     public void borrowedBookByEachUser(){
-        System.out.println(CollectionUtil.getUserBorrowedBooks());
+        for (Map.Entry<String, List<BookDTO>> entry : CollectionUtil.getUserBorrowedBooks().entrySet()) {
+            String username = entry.getKey();
+            List<BookDTO> books = entry.getValue();
+
+            System.out.println("User: " + username);
+            for (BookDTO book : books) {
+                System.out.println("  Title: " + book.getTitle() + ", Author: " + book.getAuthor());
+            }
+        }
     }
 
     //Returns the full list of books available.

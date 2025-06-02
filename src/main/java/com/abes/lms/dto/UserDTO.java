@@ -10,7 +10,6 @@ public class UserDTO extends UserBase {
     public String toString() {
         return "UserDTO{" +
                 "username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }

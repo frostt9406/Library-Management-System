@@ -29,12 +29,14 @@ public class BookDTO {
     public void decreaseQuantity() { if (quantity > 0) quantity--; }
 
 
-
     @Override
     public String toString() {
         return "BookDTO{" +
-                "title='" + title + '\'' +
-                ", id=" + id +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", rating=" + rating +
+                ", quantity=" + quantity +
                 '}';
     }
 }
