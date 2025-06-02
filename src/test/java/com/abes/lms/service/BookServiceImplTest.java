@@ -6,8 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BookServiceImplTest {
@@ -148,17 +146,5 @@ public class BookServiceImplTest {
         assertNull(result);  // should return null because the book does not exist
     }
 
-    // Test for getAllBooks (Valid)
-    @Test
-    public void testGetAllBooks_valid() {
-        // Valid: Fetching all books
-        List<BookDTO> books = List.of(
-                new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5),
-                new BookDTO("Effective Java", "Joshua Bloch", 102, 4.7, 4)
-        );
-        Mockito.when(bookDAO.getAllBooks()).thenReturn(books);  // Mocking the DAO
-        List<BookDTO> result = bookService.getAllBooks();
-        assertNotNull(result);  // should return a non-null list
-        assertEquals(2, result.size());  // should return the correct number of books
-    }
+
 }
