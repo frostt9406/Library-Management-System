@@ -47,6 +47,7 @@ public class LibrarianUI {
                 System.out.println("2. Remove Book");
                 System.out.println("3. View All Books");
                 System.out.println("4. View All Users");
+                System.out.println("5. View User Issued Books");
                 System.out.println("0. Logout");
                 System.out.print("Enter your choice: ");
                 choice = sc.nextLine();
@@ -92,9 +93,10 @@ public class LibrarianUI {
                         break;
                     case "4":
                         //View users and their borrowed books
-//                        userServices.getAllUsers().forEach(System.out::println);
-                        userServices.borrowedBookByEachUser();
+                        userServices.getAllUsers().forEach(System.out::println);
                         break;
+                    case "5":
+                        userServices.borrowedBookByEachUser();
                     case "0":
                         //Exit the librarian menu
                         System.out.println("Logged out.");

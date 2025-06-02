@@ -1,6 +1,8 @@
 package com.abes.lms.ui;
 
+import com.abes.lms.exception.InvalidEmailException;
 import com.abes.lms.exception.InvalidInputException;
+import com.abes.lms.exception.InvalidPasswordFormatException;
 import com.abes.lms.service.BookServices;
 import com.abes.lms.service.UserServices;
 import com.abes.lms.util.InputValidatorUtil;
@@ -21,14 +23,30 @@ public class UserUI {
             System.out.print("Enter username: ");
             String username = sc.nextLine();
             InputValidatorUtil.validate(username);
-
+            String password;
+            while (true){
             System.out.print("Enter password: ");
-            String password = sc.nextLine();
-            InputValidatorUtil.validate(password);
-
+            password = sc.nextLine();
+            try{
+                InputValidatorUtil.validatePassword(password);
+                break;
+            }
+            catch(InvalidPasswordFormatException e) {
+                System.out.println(e.getMessage());
+                }
+            }
+            String email;
+            while(true){
             System.out.print("Enter email: ");
-            String email = sc.nextLine();
-            InputValidatorUtil.validateEmail(email);
+            email = sc.nextLine();
+            try{
+                InputValidatorUtil.validateEmail(email);
+                break;
+                }
+            catch(InvalidEmailException e){
+                System.out.println(e.getMessage());
+                }
+            }
 
             //Check if user already exists
             if (userService.getUser(username) != null) {
@@ -124,7 +142,7 @@ public class UserUI {
             } while (!choice.equals("0"));
 
         } catch (InvalidInputException | NumberFormatException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }
