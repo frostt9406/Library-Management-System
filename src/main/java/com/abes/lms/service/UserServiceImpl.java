@@ -3,6 +3,8 @@ package com.abes.lms.service;
 import com.abes.lms.dao.UserDAO;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.dto.UserDTO;
+import com.abes.lms.exception.BookNotFoundException;
+import com.abes.lms.exception.InvalidInputException;
 import com.abes.lms.util.CollectionUtil;
 
 import java.util.*;
@@ -59,15 +61,20 @@ public void borrowBook(String username, String title) {
 //Allows a user to return a previously borrowed book.
 @Override
 public void returnBook(String username, String title) {
+        if(title.trim().isEmpty()){
+            throw new InvalidInputException("Title cannot be empty");
+        }
     List<BookDTO> borrowed = CollectionUtil.getUserBorrowedBooks().get(username);
+    if (borrowed == null || borrowed.isEmpty()) {
+        throw new BookNotFoundException("No such Book Borrowed");
+    }
     BookDTO findBook = borrowed.stream()
             .filter(book -> book.getTitle().equalsIgnoreCase(title.trim()))
             .findFirst()
             .orElse(null);
 
     if(findBook==null){
-        System.out.println("No such books borrowed by user: " + username);
-        return;
+        throw new BookNotFoundException("No such Book borrowed");
     }
     findBook.increaseQuantity();
     borrowed.remove(findBook);

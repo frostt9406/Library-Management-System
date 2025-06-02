@@ -1,5 +1,6 @@
 package com.abes.lms.ui;
 
+import com.abes.lms.exception.BookNotFoundException;
 import com.abes.lms.exception.InvalidEmailException;
 import com.abes.lms.exception.InvalidInputException;
 import com.abes.lms.exception.InvalidPasswordFormatException;
@@ -118,7 +119,11 @@ public class UserUI {
                     case "3":
                         System.out.print("Enter book title to return: ");
                         String returnTitle = sc.nextLine();
-                        userService.returnBook(username, returnTitle);
+                        try{
+                        userService.returnBook(username, returnTitle);}
+                        catch(InvalidInputException | BookNotFoundException e){
+                            System.out.println(e.getMessage());
+                        }
                         break;
                     //Sort and display books by id
                     case "4":
