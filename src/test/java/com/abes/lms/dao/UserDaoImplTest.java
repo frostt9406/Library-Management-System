@@ -17,6 +17,7 @@ public class UserDAOImplTest {
         userDAO = new UserDAOImpl();
     }
 
+
     // Test for userLogin (Valid - Correct username and password)
     @Test
     public void testUserLogin_valid() {
