@@ -66,7 +66,7 @@ public void returnBook(String username, String title) {
             .orElse(null);
 
     if(findBook==null){
-        System.out.println("No books borrowed by user: " + username);
+        System.out.println("No such books borrowed by user: " + username);
         return;
     }
     findBook.increaseQuantity();

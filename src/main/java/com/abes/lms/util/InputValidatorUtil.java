@@ -18,6 +18,24 @@ public class InputValidatorUtil {
             throw new InvalidInputException("Input cannot be null or empty.");
         }
     }
+    public static void validateString(String input) throws InvalidInputException{
+        if (!input.matches("^[^0-9]+$")) {
+            throw new InvalidInputException("Input must not contain any numeric digits.");
+        }
+    }
+    public static void validateRating(String input) throws InvalidRatingException{
+        validate(input);
+        double rating;
+        try{
+            rating = Double.parseDouble(input);
+        }
+        catch (NumberFormatException e){
+            throw new InvalidRatingException("Input must be a valid number");
+        }
+        if(rating< 0 || rating>10){
+            throw new InvalidRatingException("Rating must be between 0 and 10");
+        }
+    }
 
     public static void validateEmail(String email) throws InvalidEmailException {
         validate(email);
