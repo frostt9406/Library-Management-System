@@ -9,7 +9,6 @@ public class LibrarianDTO extends UserBase {
     public String toString() {
         return "LibrarianDTO{" +
                 "username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }

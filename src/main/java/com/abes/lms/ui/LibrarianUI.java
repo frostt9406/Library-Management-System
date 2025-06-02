@@ -105,11 +105,13 @@ public class LibrarianUI {
                         bookServices.getAllBooks().forEach(System.out::println);
                         break;
                     case "4":
-                        //View users and their borrowed books
+                        //View users
                         userServices.getAllUsers().forEach(System.out::println);
                         break;
                     case "5":
+                        //View Users Borrowed books
                         userServices.borrowedBookByEachUser();
+                        break;
                     case "0":
                         //Exit the librarian menu
                         System.out.println("Logged out.");
