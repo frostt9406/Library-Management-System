@@ -5,6 +5,7 @@ import com.abes.lms.dao.UserDAOImpl;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.exception.InvalidInputException;
 import com.abes.lms.exception.InvalidIntegerException;
+import com.abes.lms.exception.InvalidRatingException;
 import com.abes.lms.service.BookServices;
 import com.abes.lms.service.LibrarianServices;
 import com.abes.lms.service.UserServices;
@@ -80,14 +81,56 @@ public class LibrarianUI {
                         }
 
                         //Input book details
-                        System.out.print("Enter book title: ");
-                        String title = sc.nextLine();
+                        String title;
+                        while(true){
+                            System.out.print("Enter book title: ");
+                            title = sc.nextLine();
+                        try{
+                            InputValidatorUtil.validate(title);
+                            InputValidatorUtil.validateString(title);
+                            break;
+                        }
+                        catch(InvalidInputException e){
+                            System.out.println(e.getMessage());
+                            }
+                        }
+                        String author;
+                        while(true){
                         System.out.print("Enter author: ");
-                        String author = sc.nextLine();
+                        author = sc.nextLine();
+                        try{
+                            InputValidatorUtil.validate(author);
+                            InputValidatorUtil.validateString(author);
+                            break;
+                        }catch (InvalidInputException e){
+                            System.out.println(e.getMessage());
+                        }}
+                        double rating;
+                        while(true){
                         System.out.print("Enter rating: ");
-                        double rating = Double.parseDouble(sc.nextLine());
-                        System.out.print("Enter quantity: ");
-                        int quantity = Integer.parseInt(sc.nextLine());
+                        String input = sc.nextLine();
+                        try{
+                            InputValidatorUtil.validateRating(input);
+                            rating= Double.parseDouble(input);
+                            break;
+                        }
+                        catch(InvalidRatingException e){
+                            System.out.println(e.getMessage());
+                        }
+                        }
+                        int quantity;
+                        while(true){
+                            System.out.print("Enter quantity: ");
+                            String input=sc.nextLine();
+                        try{
+                            InputValidatorUtil.validateInteger(input);
+                            quantity=Integer.parseInt(input);
+                            break;
+                        }
+                        catch(InvalidIntegerException e){
+                            System.out.println(e.getMessage());
+                            }
+                        }
 
                         BookDTO book = new BookDTO(title, author, id, rating, quantity);
                         bookDAO.addBook(book);
