@@ -3,10 +3,7 @@ package com.abes.lms.dao;
 import com.abes.lms.dto.BookDTO;
 import com.abes.lms.util.CollectionUtil;
 import org.junit.jupiter.api.*;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,22 +11,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BookDaoImplTest {
 
     private BookDAO bookDAO;
-    private List<BookDTO> mockBookList;
-    private MockedStatic<CollectionUtil> mockedStatic;
+    private List<BookDTO> bookList;
 
     @BeforeEach
     public void setup() {
-        mockBookList = new ArrayList<>();
-        mockedStatic = Mockito.mockStatic(CollectionUtil.class);
-        mockedStatic.when(CollectionUtil::getBookList).thenReturn(mockBookList);
+        bookList = CollectionUtil.getBookList();
+        bookList.clear(); // reset shared list before each test
         bookDAO = new BookDaoImpl();
     }
 
-    @AfterEach
-    public void tearDown() {
-        mockedStatic.close();
-    }
-    //test case to add a book
     @Test
     public void testAddBook_valid() {
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
@@ -37,13 +27,13 @@ public class BookDaoImplTest {
         assertTrue(result);
         assertEquals(book, bookDAO.getBookById(101));
     }
-    // test case for duplicate title
+
     @Test
     public void testAddBook_invalid_duplicateTitle() {
         BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
         BookDTO book2 = new BookDTO("Clean Code", "Robert C. Martin", 102, 4.9, 10);
 
-        mockBookList.add(book1); // Already exists by title
+        bookList.add(book1);
 
         boolean result = bookDAO.addBook(book2);
         assertFalse(result);
@@ -54,7 +44,7 @@ public class BookDaoImplTest {
         BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
         BookDTO book2 = new BookDTO("Effective Java", "Joshua Bloch", 101, 4.7, 3);
 
-        mockBookList.add(book1); // Already exists by ID
+        bookList.add(book1);
 
         boolean result = bookDAO.addBook(book2);
         assertFalse(result);
@@ -63,7 +53,7 @@ public class BookDaoImplTest {
     @Test
     public void testRemoveBook_valid() {
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        mockBookList.add(book);
+        bookList.add(book);
 
         boolean result = bookDAO.removeBook("Clean Code");
         assertTrue(result);
@@ -79,7 +69,7 @@ public class BookDaoImplTest {
     @Test
     public void testIsBookPresent_valid() {
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        mockBookList.add(book);
+        bookList.add(book);
 
         boolean result = bookDAO.isBookPresent("Clean Code");
         assertTrue(result);
@@ -95,8 +85,8 @@ public class BookDaoImplTest {
     public void testGetAllBooks_valid() {
         BookDTO book1 = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
         BookDTO book2 = new BookDTO("Effective Java", "Joshua Bloch", 102, 4.7, 3);
-        mockBookList.add(book1);
-        mockBookList.add(book2);
+        bookList.add(book1);
+        bookList.add(book2);
 
         List<BookDTO> result = bookDAO.getAllBooks();
         assertNotNull(result);
@@ -106,7 +96,7 @@ public class BookDaoImplTest {
     @Test
     public void testGetBookByTitle_valid() {
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        mockBookList.add(book);
+        bookList.add(book);
 
         BookDTO result = bookDAO.getBookByTitle("Clean Code");
         assertNotNull(result);
@@ -122,7 +112,7 @@ public class BookDaoImplTest {
     @Test
     public void testGetBookById_valid() {
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        mockBookList.add(book);
+        bookList.add(book);
 
         BookDTO result = bookDAO.getBookById(101);
         assertNotNull(result);
@@ -138,7 +128,7 @@ public class BookDaoImplTest {
     @Test
     public void testAddQuantity_valid() {
         BookDTO book = new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5);
-        mockBookList.add(book);
+        bookList.add(book);
 
         boolean result = bookDAO.addQuantity(book, 5);
         assertTrue(result);

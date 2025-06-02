@@ -1,10 +1,16 @@
 package com.abes.lms.service;
 
+import com.abes.lms.dao.BookDAO;
+import com.abes.lms.dao.BookDaoImpl;
 import com.abes.lms.dao.LibrarianDAO;
+import com.abes.lms.dao.LibrarianDAOImpl;
+import com.abes.lms.dto.BookDTO;
 import com.abes.lms.dto.LibrarianDTO;
+import com.abes.lms.util.CollectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,94 +20,70 @@ public class LibrarianServiceImplTest {
     private LibrarianDAO librarianDAO;
     private LibrarianServiceImpl librarianService;
 
+    private List<BookDTO> bookList;
+    private List<LibrarianDTO> librarianList;
+
     @BeforeEach
     public void setup() {
-        // Mocking the BookServices and LibrarianDAO dependencies
-        bookService = Mockito.mock(BookServices.class);
-        librarianDAO = Mockito.mock(LibrarianDAO.class);
+        bookList = CollectionUtil.getBookList();
+        librarianList = CollectionUtil.getLibarianList();
 
-        // Creating the service with mocked dependencies
+        bookList.clear();        // Reset shared book collection
+        librarianList.clear();   // Reset shared librarian collection
+
+        // Add test data
+        bookList.add(new BookDTO("Clean Code", "Robert C. Martin", 101, 4.8, 5));
+        bookList.add(new BookDTO("Effective Java", "Joshua Bloch", 102, 4.7, 4));
+
+        librarianList.add(new LibrarianDTO("lib", "lib", "lib@lib.com"));
+
+        // Real implementations
+        BookDAO bookDAO = new BookDaoImpl();
+        bookService = new BookServiceImpl(bookDAO);
+        librarianDAO = new LibrarianDAOImpl();
         librarianService = new LibrarianServiceImpl(bookService, librarianDAO);
     }
 
-    // Test for LibrarianLogin (Valid)
     @Test
     public void testLibrarianLogin_valid() {
-        // Valid: Correct username and password
-        String username = "lib";
-        String password = "lib";
-        Mockito.when(librarianDAO.librarianLogin(username, password))
-                .thenReturn(new LibrarianDTO(username, password, "lib@lib.com"));  // Mocking DAO to return valid librarian
-
-        boolean result = librarianService.LibrarianLogin(username, password);
-        assertTrue(result);  // should return true because login is successful
+        boolean result = librarianService.LibrarianLogin("lib", "lib");
+        assertTrue(result);
     }
 
-    // Test for LibrarianLogin (Invalid - Incorrect password)
     @Test
     public void testLibrarianLogin_invalid_incorrectPassword() {
-        // Invalid: Incorrect password
-        String username = "lib";
-        String password = "wrongPassword";
-        Mockito.when(librarianDAO.librarianLogin(username, password)).thenReturn(null);  // Mocking invalid login
-
-        boolean result = librarianService.LibrarianLogin(username, password);
-        assertFalse(result);  // should return false because the password is incorrect
+        boolean result = librarianService.LibrarianLogin("lib", "wrongPassword");
+        assertFalse(result);
     }
 
-    // Test for LibrarianLogin (Invalid - Non-existing librarian)
     @Test
     public void testLibrarianLogin_invalid_nonExistingLibrarian() {
-        // Invalid: Non-existing librarian
-        String username = "nonExistentLibrarian";
-        String password = "somePassword";
-        Mockito.when(librarianDAO.librarianLogin(username, password)).thenReturn(null);  // Mocking the DAO to return null
-
-        boolean result = librarianService.LibrarianLogin(username, password);
-        assertFalse(result);  // should return false because librarian doesn't exist
+        boolean result = librarianService.LibrarianLogin("nonExistentLibrarian", "somePassword");
+        assertFalse(result);
     }
 
-    // Test for removeBook (Valid)
     @Test
     public void testRemoveBook_valid() {
-        // Valid: Removing an existing book
-        String title = "Effective Java";
-        Mockito.when(bookService.removeBook(title)).thenReturn(true);  // Mocking bookService to return true
-
-        boolean result = librarianService.removeBook(title);
-        assertTrue(result);  // should return true because the book was successfully removed
+        boolean result = librarianService.removeBook("Effective Java");
+        assertTrue(result);
+        assertNull(bookService.getBookByTitle("Effective Java"));  // book should no longer exist
     }
 
-    // Test for removeBook (Invalid - Non-existing book)
     @Test
     public void testRemoveBook_invalid() {
-        // Invalid: Trying to remove a non-existing book
-        String title = "Non-Existent Book";
-        Mockito.when(bookService.removeBook(title)).thenReturn(false);  // Mocking bookService to return false
-
-        boolean result = librarianService.removeBook(title);
-        assertFalse(result);  // should return false because the book does not exist
+        boolean result = librarianService.removeBook("Non-Existent Book");
+        assertFalse(result);
     }
 
-    // Test for isBookPresent (Valid)
     @Test
     public void testIsBookPresent_valid() {
-        // Valid: Checking if a book exists
-        String title = "Clean Code";
-        Mockito.when(bookService.isBookPresent(title)).thenReturn(true);  // Mocking bookService to return true
-
-        boolean result = librarianService.isBookPresent(title);
-        assertTrue(result);  // should return true because the book is present
+        boolean result = librarianService.isBookPresent("Clean Code");
+        assertTrue(result);
     }
 
-    // Test for isBookPresent (Invalid - Non-existing book)
     @Test
     public void testIsBookPresent_invalid() {
-        // Invalid: Checking if a non-existing book exists
-        String title = "Non-Existent Book";
-        Mockito.when(bookService.isBookPresent(title)).thenReturn(false);  // Mocking bookService to return false
-
-        boolean result = librarianService.isBookPresent(title);
-        assertFalse(result);  // should return false because the book is not present
+        boolean result = librarianService.isBookPresent("Some Unknown Book");
+        assertFalse(result);
     }
 }

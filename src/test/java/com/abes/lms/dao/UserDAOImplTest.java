@@ -4,10 +4,6 @@ import com.abes.lms.dto.UserDTO;
 import com.abes.lms.util.CollectionUtil;
 import org.junit.jupiter.api.*;
 
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,36 +11,29 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserDAOImplTest {
 
     private UserDAO userDAO;
-    private List<UserDTO> mockUserList;
-    private MockedStatic<CollectionUtil> mockedStatic;
+    private List<UserDTO> userList;
 
     @BeforeEach
     public void setup() {
-        mockUserList = new ArrayList<>();
-        mockedStatic = Mockito.mockStatic(CollectionUtil.class);
-        mockedStatic.when(CollectionUtil::getUserList).thenReturn(mockUserList);
+        userList = CollectionUtil.getUserList();
+        userList.clear(); // Reset shared list for isolation
         userDAO = new UserDAOImpl();
     }
 
-    @AfterEach
-    public void tearDown() {
-        mockedStatic.close(); // Clean up the static mock
-    }
-    // test case for user login
     @Test
     public void testUserLogin_valid() {
         UserDTO user = new UserDTO("john_doe", "password123", "john@example.com");
-        mockUserList.add(user);
+        userList.add(user);
 
         UserDTO result = userDAO.userLogin("john_doe", "password123");
         assertNotNull(result);
         assertEquals("john_doe", result.getUsername());
     }
-    // test case for wrong password
+
     @Test
     public void testUserLogin_invalid_wrongPassword() {
         UserDTO user = new UserDTO("john_doe", "password123", "john@example.com");
-        mockUserList.add(user);
+        userList.add(user);
 
         UserDTO result = userDAO.userLogin("john_doe", "wrongpassword");
         assertNull(result);
@@ -53,7 +42,7 @@ public class UserDAOImplTest {
     @Test
     public void testUserLogin_invalid_wrongUsername() {
         UserDTO user = new UserDTO("john_doe", "password123", "john@example.com");
-        mockUserList.add(user);
+        userList.add(user);
 
         UserDTO result = userDAO.userLogin("wrong_username", "password123");
         assertNull(result);
@@ -62,7 +51,7 @@ public class UserDAOImplTest {
     @Test
     public void testUserLogin_invalid_bothIncorrect() {
         UserDTO user = new UserDTO("john_doe", "password123", "john@example.com");
-        mockUserList.add(user);
+        userList.add(user);
 
         UserDTO result = userDAO.userLogin("wrong_username", "wrongpassword");
         assertNull(result);
@@ -83,7 +72,7 @@ public class UserDAOImplTest {
     @Test
     public void testUserRegister_invalid_userExists() {
         UserDTO existingUser = new UserDTO("existing_user", "password123", "existing@example.com");
-        mockUserList.add(existingUser);
+        userList.add(existingUser);
 
         UserDTO newUser = new UserDTO("existing_user", "new_password", "new@example.com");
 
@@ -94,7 +83,7 @@ public class UserDAOImplTest {
     @Test
     public void testGetUser_valid() {
         UserDTO user = new UserDTO("john_doe", "password123", "john@example.com");
-        mockUserList.add(user);
+        userList.add(user);
 
         UserDTO result = userDAO.getUser("john_doe");
         assertNotNull(result);
@@ -111,8 +100,8 @@ public class UserDAOImplTest {
     public void testGetAllUsers_valid() {
         UserDTO user1 = new UserDTO("john_doe", "password123", "john@example.com");
         UserDTO user2 = new UserDTO("jane_doe", "password456", "jane@example.com");
-        mockUserList.add(user1);
-        mockUserList.add(user2);
+        userList.add(user1);
+        userList.add(user2);
 
         List<UserDTO> result = userDAO.getAllUsers();
         assertNotNull(result);
