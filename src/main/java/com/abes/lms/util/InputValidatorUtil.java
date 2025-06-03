@@ -24,7 +24,6 @@ public class InputValidatorUtil {
         }
     }
     public static void validateRating(String input) throws InvalidRatingException{
-        validate(input);
         double rating;
         try{
             rating = Double.parseDouble(input);
