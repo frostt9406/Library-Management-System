@@ -22,13 +22,21 @@ public class BookDTO {
     public int getQuantity() { return quantity; }
 
     public void setId(int id) { this.id = id; }
+    public void setQuantity(int quantity) {this.quantity=quantity; }
+
 
     public void increaseQuantity() { quantity++; }
     public void decreaseQuantity() { if (quantity > 0) quantity--; }
 
+
     @Override
     public String toString() {
-        return String.format("BookDTO[ID=%d, Title='%s', Author='%s', Rating=%.1f, Quantity=%d]",
-                id, title, author, rating, quantity);
+        return "BookDTO{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", rating=" + rating +
+                ", quantity=" + quantity +
+                '}';
     }
 }
