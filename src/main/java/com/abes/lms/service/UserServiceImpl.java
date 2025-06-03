@@ -60,11 +60,12 @@ public void borrowBook(String username, String title) {
 
 //Allows a user to return a previously borrowed book.
 @Override
-public void returnBook(String username, String title) {
+public void returnBook(String username, String title) throws InvalidInputException, BookNotFoundException {
         if(title.trim().isEmpty()){
             throw new InvalidInputException("Title cannot be empty");
         }
-    List<BookDTO> borrowed = CollectionUtil.getUserBorrowedBooks().get(username);
+
+    List<BookDTO> borrowed = CollectionUtil.getUserBorrowedBooks().getOrDefault(username,null);
     if (borrowed == null || borrowed.isEmpty()) {
         throw new BookNotFoundException("No such Book Borrowed");
     }
